@@ -25,6 +25,7 @@ import {
   login,
   register,
   setUnauthorizedHandler,
+  testConnection,
 } from './lib/api'
 
 const THEME_STORAGE_KEY = 'kafkaboard_theme'
@@ -84,10 +85,12 @@ function App() {
   const [messagesError, setMessagesError] = useState('')
   const [createTopicError, setCreateTopicError] = useState('')
   const [createClusterError, setCreateClusterError] = useState('')
+  const [testConnectionResult, setTestConnectionResult] = useState(null)
 
   const [authLoading, setAuthLoading] = useState(false)
   const [clustersLoading, setClustersLoading] = useState(false)
   const [clusterActionLoading, setClusterActionLoading] = useState(false)
+  const [testConnectionLoading, setTestConnectionLoading] = useState(false)
   const [healthLoading, setHealthLoading] = useState(false)
   const [topicsLoading, setTopicsLoading] = useState(false)
   const [groupsLoading, setGroupsLoading] = useState(false)
@@ -395,6 +398,36 @@ function App() {
     }))
   }
 
+  async function handleTestClusterConnection() {
+    if (!clusterForm.bootstrapServers.trim()) {
+      setCreateClusterError('Bootstrap server adresi boş olamaz')
+      return
+    }
+
+    setCreateClusterError('')
+    setTestConnectionLoading(true)
+
+    try {
+      const result = await testConnection({
+        bootstrapServers: clusterForm.bootstrapServers.trim(),
+      })
+      safeSetState(() => {
+        setTestConnectionResult(result)
+      })
+    } catch (error) {
+      safeSetState(() => {
+        setTestConnectionResult({
+          status: 'UNHEALTHY',
+          error: error instanceof Error ? error.message : 'Unknown error',
+        })
+      })
+    } finally {
+      safeSetState(() => {
+        setTestConnectionLoading(false)
+      })
+    }
+  }
+
   async function handleCreateCluster() {
     setClusterActionLoading(true)
     setCreateClusterError('')
@@ -408,6 +441,7 @@ function App() {
       safeSetState(() => {
         setIsClusterModalOpen(false)
         setClusterForm(INITIAL_CLUSTER_FORM)
+        setTestConnectionResult(null)
       })
 
       await loadClusters(nextCluster.id)
@@ -813,9 +847,13 @@ function App() {
           setIsClusterModalOpen(false)
           setCreateClusterError('')
           setClusterForm(INITIAL_CLUSTER_FORM)
+          setTestConnectionResult(null)
         }}
+        onTestConnection={handleTestClusterConnection}
         onSubmit={handleCreateCluster}
         loading={clusterActionLoading}
+        testLoading={testConnectionLoading}
+        testResult={testConnectionResult}
         error={createClusterError}
       />
       <Footer />

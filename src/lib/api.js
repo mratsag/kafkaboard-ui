@@ -89,6 +89,13 @@ export async function createCluster(payload) {
   })
 }
 
+export async function testConnection(payload) {
+  return request('/api/clusters/test-connection', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
 export async function deleteCluster(clusterId) {
   return request(`/api/clusters/${encodeURIComponent(clusterId)}`, {
     method: 'DELETE',

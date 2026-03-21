@@ -5,8 +5,11 @@ export function ClusterModal({
   form,
   onChange,
   onClose,
+  onTestConnection,
   onSubmit,
   loading,
+  testLoading,
+  testResult,
   error,
 }) {
   useEffect(() => {
@@ -74,7 +77,29 @@ export function ClusterModal({
           </p>
         ) : null}
 
+        {testResult ? (
+          <p
+            className={`mx-6 mt-4 rounded-xl border px-4 py-3 text-sm font-medium ${
+              testResult.status === 'HEALTHY'
+                ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200'
+                : 'border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200'
+            }`}
+          >
+            {testResult.status === 'HEALTHY'
+              ? 'Bağlantı başarılı'
+              : 'Bağlantı kurulamadı'}
+          </p>
+        ) : null}
+
         <div className="mt-6 flex justify-end gap-3 border-t border-slate-200 px-6 py-5 dark:border-slate-700">
+          <button
+            type="button"
+            onClick={onTestConnection}
+            disabled={testLoading || !form.bootstrapServers.trim()}
+            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-900"
+          >
+            {testLoading ? 'Test ediliyor...' : 'Bağlantıyı Test Et'}
+          </button>
           <button
             type="button"
             onClick={onClose}
