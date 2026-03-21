@@ -23,8 +23,11 @@ import {
   getEmail,
   getToken,
   login,
+  logout,
   register,
+  setTokenUpdateHandler,
   setUnauthorizedHandler,
+  storeAuthSession,
   testConnection,
 } from './lib/api'
 
@@ -292,6 +295,16 @@ function App() {
   }, [resetToLoginState])
 
   useEffect(() => {
+    setTokenUpdateHandler((nextToken) => {
+      setToken(nextToken)
+    })
+
+    return () => {
+      setTokenUpdateHandler(null)
+    }
+  }, [])
+
+  useEffect(() => {
     if (!token) {
       return
     }
@@ -348,8 +361,11 @@ function App() {
       const response =
         authMode === 'login' ? await login(payload) : await register(payload)
 
-      localStorage.setItem('kafkaboard_token', response.token)
-      localStorage.setItem('kafkaboard_email', payload.email)
+      storeAuthSession({
+        token: response.token,
+        refreshToken: response.refreshToken,
+        email: payload.email,
+      })
       safeSetState(() => {
         setToken(response.token)
         setUserEmail(payload.email)
@@ -373,9 +389,15 @@ function App() {
     }
   }
 
-  function handleLogout() {
-    console.log('Scenario 3 - logout successful')
-    resetToLoginState()
+  async function handleLogout() {
+    try {
+      await logout()
+    } catch {
+      // Logout should still clear local state even if revoke fails.
+    } finally {
+      console.log('Scenario 3 - logout successful')
+      resetToLoginState()
+    }
   }
 
   function handleToggleTheme() {

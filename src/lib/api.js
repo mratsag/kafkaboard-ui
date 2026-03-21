@@ -1,8 +1,11 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 const TOKEN_STORAGE_KEY = 'kafkaboard_token'
+const REFRESH_TOKEN_STORAGE_KEY = 'kafkaboard_refresh_token'
 const EMAIL_STORAGE_KEY = 'kafkaboard_email'
 
 let unauthorizedHandler = null
+let tokenUpdateHandler = null
+let refreshRequestPromise = null
 
 if (!API_BASE_URL) {
   throw new Error('VITE_API_BASE_URL is not defined')
@@ -12,12 +15,27 @@ export function getToken() {
   return localStorage.getItem(TOKEN_STORAGE_KEY)
 }
 
+export function getRefreshToken() {
+  return localStorage.getItem(REFRESH_TOKEN_STORAGE_KEY)
+}
+
 export function getEmail() {
   return localStorage.getItem(EMAIL_STORAGE_KEY) ?? ''
 }
 
+export function storeAuthSession({ token, refreshToken, email }) {
+  localStorage.setItem(TOKEN_STORAGE_KEY, token)
+  if (refreshToken) {
+    localStorage.setItem(REFRESH_TOKEN_STORAGE_KEY, refreshToken)
+  }
+  if (email) {
+    localStorage.setItem(EMAIL_STORAGE_KEY, email)
+  }
+}
+
 export function clearToken() {
   localStorage.removeItem(TOKEN_STORAGE_KEY)
+  localStorage.removeItem(REFRESH_TOKEN_STORAGE_KEY)
   localStorage.removeItem(EMAIL_STORAGE_KEY)
 }
 
@@ -25,32 +43,126 @@ export function setUnauthorizedHandler(handler) {
   unauthorizedHandler = handler
 }
 
-async function request(path, options = {}) {
-  const token = getToken()
+export function setTokenUpdateHandler(handler) {
+  tokenUpdateHandler = handler
+}
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(options.headers ?? {}),
-    },
-    ...options,
-  })
-
-  if (response.status === 401) {
-    clearToken()
-    unauthorizedHandler?.()
-    throw new Error('Oturum süresi doldu. Tekrar giriş yapın.')
+function shouldTryRefresh(path, allowRefresh) {
+  if (!allowRefresh) {
+    return false
   }
 
+  return ![
+    '/api/auth/login',
+    '/api/auth/register',
+    '/api/auth/refresh',
+    '/api/auth/logout',
+  ].includes(path)
+}
+
+async function parseResponseBody(response) {
   if (response.status === 204) {
     return null
   }
 
   const contentType = response.headers.get('content-type') ?? ''
-  const data = contentType.includes('application/json')
+  return contentType.includes('application/json')
     ? await response.json()
     : await response.text()
+}
+
+async function performFetch(path, options = {}, tokenOverride = null) {
+  const { headers, useAuth = true, ...fetchOptions } = options
+  const token = tokenOverride ?? getToken()
+
+  return fetch(`${API_BASE_URL}${path}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...(useAuth && token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(headers ?? {}),
+    },
+    ...fetchOptions,
+  })
+}
+
+async function refreshAccessTokenInternal() {
+  if (refreshRequestPromise) {
+    return refreshRequestPromise
+  }
+
+  const refreshToken = getRefreshToken()
+  if (!refreshToken) {
+    throw new Error('Refresh token bulunamadı')
+  }
+
+  refreshRequestPromise = (async () => {
+    const response = await performFetch(
+      '/api/auth/refresh',
+      {
+        method: 'POST',
+        body: JSON.stringify({ refreshToken }),
+        useAuth: false,
+      },
+      null,
+    )
+
+    const data = await parseResponseBody(response)
+
+    if (response.status === 401) {
+      throw new Error('Oturum süresi doldu. Tekrar giriş yapın.')
+    }
+
+    if (!response.ok) {
+      const errorMessage =
+        typeof data === 'object' && data !== null && 'error' in data
+          ? data.error
+          : 'Unexpected API error'
+      throw new Error(errorMessage)
+    }
+
+    localStorage.setItem(TOKEN_STORAGE_KEY, data.token)
+    tokenUpdateHandler?.(data.token)
+    return data.token
+  })()
+
+  try {
+    return await refreshRequestPromise
+  } finally {
+    refreshRequestPromise = null
+  }
+}
+
+async function request(path, options = {}) {
+  const { allowRefresh = true, ...fetchOptions } = options
+  let response = await performFetch(path, fetchOptions)
+
+  if (response.status === 401 && shouldTryRefresh(path, allowRefresh)) {
+    try {
+      const refreshedToken = await refreshAccessTokenInternal()
+      response = await performFetch(path, fetchOptions, refreshedToken)
+    } catch {
+      clearToken()
+      unauthorizedHandler?.()
+      throw new Error('Oturum süresi doldu. Tekrar giriş yapın.')
+    }
+  }
+
+  const data = await parseResponseBody(response)
+
+  if (response.status === 401) {
+    const errorMessage =
+      typeof data === 'object' && data !== null && 'error' in data
+        ? data.error
+        : 'Oturum süresi doldu. Tekrar giriş yapın.'
+
+    if (path === '/api/auth/login' || path === '/api/auth/register') {
+      throw new Error(errorMessage)
+    }
+
+    clearToken()
+    unauthorizedHandler?.()
+    throw new Error('Oturum süresi doldu. Tekrar giriş yapın.')
+  }
 
   if (response.status === 429) {
     const errorMessage =
@@ -83,6 +195,7 @@ export async function register(payload) {
   return request('/api/auth/register', {
     method: 'POST',
     body: JSON.stringify(payload),
+    allowRefresh: false,
   })
 }
 
@@ -90,7 +203,31 @@ export async function login(payload) {
   return request('/api/auth/login', {
     method: 'POST',
     body: JSON.stringify(payload),
+    allowRefresh: false,
   })
+}
+
+export async function refreshAccessToken() {
+  return refreshAccessTokenInternal()
+}
+
+export async function logout() {
+  const refreshToken = getRefreshToken()
+  if (!refreshToken) {
+    return null
+  }
+
+  const response = await performFetch('/api/auth/logout', {
+    method: 'POST',
+    body: JSON.stringify({ refreshToken }),
+    useAuth: false,
+  })
+
+  if (response.status === 204) {
+    return null
+  }
+
+  return parseResponseBody(response)
 }
 
 export async function fetchClusters() {
