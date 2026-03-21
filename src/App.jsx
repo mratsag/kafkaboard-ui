@@ -78,42 +78,6 @@ function App() {
   const [topicForm, setTopicForm] = useState(INITIAL_TOPIC_FORM)
   const [clusterForm, setClusterForm] = useState(INITIAL_CLUSTER_FORM)
 
-  useEffect(() => {
-    isMountedRef.current = true
-
-    return () => {
-      isMountedRef.current = false
-    }
-  }, [resetToLoginState])
-
-  useEffect(() => {
-    setUnauthorizedHandler(() => {
-      safeSetState(() => {
-        resetToLoginState()
-      })
-    })
-
-    return () => {
-      setUnauthorizedHandler(null)
-    }
-  }, [resetToLoginState])
-
-  useEffect(() => {
-    if (!token) {
-      return
-    }
-
-    loadClusters()
-  }, [loadClusters, token])
-
-  useEffect(() => {
-    if (!token || !selectedClusterId) {
-      return
-    }
-
-    loadClusterDashboard(selectedClusterId)
-  }, [loadClusterDashboard, selectedClusterId, token])
-
   function safeSetState(updater) {
     if (isMountedRef.current) {
       updater()
@@ -241,6 +205,42 @@ function App() {
       })
     }
   }, [])
+
+  useEffect(() => {
+    isMountedRef.current = true
+
+    return () => {
+      isMountedRef.current = false
+    }
+  }, [])
+
+  useEffect(() => {
+    setUnauthorizedHandler(() => {
+      safeSetState(() => {
+        resetToLoginState()
+      })
+    })
+
+    return () => {
+      setUnauthorizedHandler(null)
+    }
+  }, [resetToLoginState])
+
+  useEffect(() => {
+    if (!token) {
+      return
+    }
+
+    loadClusters()
+  }, [loadClusters, token])
+
+  useEffect(() => {
+    if (!token || !selectedClusterId) {
+      return
+    }
+
+    loadClusterDashboard(selectedClusterId)
+  }, [loadClusterDashboard, selectedClusterId, token])
 
   async function handleAuthSubmit() {
     setAuthLoading(true)
