@@ -1,4 +1,6 @@
+import { LagChart } from './LagChart'
 import { Skeleton } from './Skeleton'
+import { useLagHistory } from '../hooks/useLagHistory'
 
 function lagTone(totalLag) {
   if (totalLag > 100) {
@@ -19,6 +21,8 @@ export function ConsumerGroupsSection({
   error,
   connected,
 }) {
+  const lagHistory = useLagHistory(groups)
+
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
       <div className="flex items-start justify-between gap-4">
@@ -100,6 +104,7 @@ export function ConsumerGroupsSection({
                     group={group}
                     expanded={expanded}
                     onToggle={onToggle}
+                    chartData={lagHistory[group.groupId] ?? []}
                   />
                 )
               })
@@ -111,7 +116,7 @@ export function ConsumerGroupsSection({
   )
 }
 
-function FragmentRow({ group, expanded, onToggle }) {
+function FragmentRow({ group, expanded, onToggle, chartData }) {
   return (
     <>
       <tr
@@ -158,6 +163,19 @@ function FragmentRow({ group, expanded, onToggle }) {
                   ))}
                 </tbody>
               </table>
+
+              {chartData.length > 0 ? (
+                <LagChart groupId={group.groupId} data={chartData} />
+              ) : (
+                <div className="border-t border-slate-200 px-4 py-6 text-center dark:border-slate-700">
+                  <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                    Son 10 dakika
+                  </p>
+                  <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                    Grafik için veri toplanıyor...
+                  </p>
+                </div>
+              )}
             </div>
           </td>
         </tr>
