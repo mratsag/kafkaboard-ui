@@ -5,6 +5,7 @@ export function TopicSection({
   deletingTopic,
   onOpenCreate,
   onDelete,
+  disabled,
 }) {
   return (
     <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
@@ -20,6 +21,7 @@ export function TopicSection({
         <button
           type="button"
           onClick={onOpenCreate}
+          disabled={disabled}
           className="rounded-2xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-600"
         >
           Yeni Topic
@@ -52,7 +54,7 @@ export function TopicSection({
             ) : topics.length === 0 ? (
               <tr>
                 <td className="px-5 py-8 text-slate-500" colSpan="4">
-                  Topic bulunamadı.
+                  {disabled ? 'Önce bir cluster seçin.' : 'Topic bulunamadı.'}
                 </td>
               </tr>
             ) : (

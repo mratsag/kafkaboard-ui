@@ -16,6 +16,7 @@ export function MessageViewer({
   loading,
   error,
   messages,
+  disabled,
 }) {
   return (
     <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
@@ -34,6 +35,7 @@ export function MessageViewer({
           <select
             value={selectedTopic}
             onChange={(event) => onTopicChange(event.target.value)}
+            disabled={disabled}
             className="h-11 rounded-2xl border border-slate-300 bg-slate-50 px-4 outline-none transition focus:border-slate-900 focus:bg-white"
           >
             <option value="">Topic seçin</option>
@@ -51,13 +53,14 @@ export function MessageViewer({
             min="1"
             value={limit}
             onChange={(event) => onLimitChange(event.target.value)}
+            disabled={disabled}
             className="h-11 rounded-2xl border border-slate-300 bg-slate-50 px-4 outline-none transition focus:border-slate-900 focus:bg-white"
           />
         </label>
         <button
           type="button"
           onClick={onFetch}
-          disabled={loading}
+          disabled={loading || disabled}
           className="h-11 self-end rounded-2xl bg-slate-950 px-5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
         >
           {loading ? 'Getiriliyor...' : 'Getir'}
@@ -91,7 +94,7 @@ export function MessageViewer({
             ) : messages.length === 0 ? (
               <tr>
                 <td className="px-5 py-8 text-slate-500" colSpan="5">
-                  Mesaj bulunamadı.
+                  {disabled ? 'Önce bir cluster seçin.' : 'Mesaj bulunamadı.'}
                 </td>
               </tr>
             ) : (
