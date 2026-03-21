@@ -52,6 +52,21 @@ async function request(path, options = {}) {
     ? await response.json()
     : await response.text()
 
+  if (response.status === 429) {
+    const errorMessage =
+      typeof data === 'object' && data !== null && 'error' in data
+        ? data.error
+        : 'Çok fazla istek. Lütfen bekleyin.'
+    const retryAfter =
+      typeof data === 'object' && data !== null && 'retryAfter' in data
+        ? data.retryAfter
+        : null
+
+    throw new Error(
+      retryAfter ? `${errorMessage} (${retryAfter}s sonra tekrar deneyin)` : errorMessage,
+    )
+  }
+
   if (!response.ok) {
     const errorMessage =
       typeof data === 'object' && data !== null && 'error' in data
