@@ -20,8 +20,8 @@ export function AuthScreen({
   }
 
   return (
-    <div className="flex min-h-full flex-1 text-slate-900 dark:text-slate-100">
-      <section className="flex w-2/5 flex-col justify-center bg-slate-900 px-16 py-12 text-white dark:bg-slate-950">
+    <div className="flex min-h-full flex-1 text-slate-100">
+      <section className="flex w-2/5 flex-col justify-center bg-slate-950 px-16 py-12 text-white">
         <div className="mx-auto flex w-full max-w-xl flex-col justify-center">
           <p className="text-sm font-medium uppercase tracking-wider text-violet-300">
             kafkaboard
@@ -50,7 +50,7 @@ export function AuthScreen({
         </div>
       </section>
 
-      <section className="flex w-3/5 flex-col items-center justify-center bg-white px-16 py-12 dark:bg-slate-900">
+      <section className="flex w-3/5 flex-col items-center justify-center bg-slate-900 px-16 py-12">
         <form
           className="w-full max-w-md"
           onSubmit={(event) => {
@@ -60,18 +60,18 @@ export function AuthScreen({
           onKeyDown={handleKeyDown}
         >
           {error ? (
-            <div className="mb-6 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200">
+            <div className="mb-6 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
               {error}
             </div>
           ) : null}
 
-          <p className="text-xs font-medium uppercase tracking-wider text-violet-600 dark:text-violet-300">
+          <p className="text-xs font-medium uppercase tracking-wider text-violet-300">
             {mode === 'login' ? 'Welcome back' : 'Create account'}
           </p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-100">
             {mode === 'login' ? 'Giriş yapın' : 'Yeni hesap oluşturun'}
           </h2>
-          <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+          <p className="mt-2 text-sm text-slate-400">
             {mode === 'login'
               ? 'Kaydedilmiş cluster listenize erişmek için oturum açın.'
               : 'Yeni hesabınızı oluşturun, ardından dashboard doğrudan açılacak.'}
@@ -88,7 +88,7 @@ export function AuthScreen({
                     email: event.target.value,
                   }))
                 }
-                className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 pr-12 text-sm outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                className="h-12 w-full rounded-xl border border-slate-700 bg-slate-800 px-4 pr-12 text-sm text-slate-100 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
               />
             </FieldLabel>
 
@@ -103,7 +103,7 @@ export function AuthScreen({
                       password: event.target.value,
                     }))
                   }
-                  className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 pr-12 text-sm outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                  className="h-12 w-full rounded-xl border border-slate-700 bg-slate-800 px-4 pr-12 text-sm text-slate-100 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
                 />
                 <PasswordToggleButton
                   visible={showPassword}
@@ -124,7 +124,7 @@ export function AuthScreen({
                         confirmPassword: event.target.value,
                       }))
                     }
-                    className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 pr-12 text-sm outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                    className="h-12 w-full rounded-xl border border-slate-700 bg-slate-800 px-4 pr-12 text-sm text-slate-100 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
                   />
                   <PasswordToggleButton
                     visible={showConfirmPassword}
@@ -149,12 +149,12 @@ export function AuthScreen({
                 : 'Register'}
           </button>
 
-          <p className="mt-6 text-sm text-slate-500 dark:text-slate-400">
+          <p className="mt-6 text-sm text-slate-400">
             {mode === 'login' ? 'Hesabınız yok mu?' : 'Zaten hesabınız var mı?'}{' '}
             <button
               type="button"
               onClick={() => onModeChange(mode === 'login' ? 'register' : 'login')}
-              className="font-medium text-violet-600 transition hover:text-violet-700 dark:text-violet-300 dark:hover:text-violet-200"
+              className="font-medium text-violet-300 transition hover:text-violet-200"
             >
               {mode === 'login' ? 'Register' : 'Login'}
             </button>
@@ -167,7 +167,7 @@ export function AuthScreen({
 
 function FieldLabel({ label, children }) {
   return (
-    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+    <label className="block text-sm font-medium text-slate-300">
       <span className="mb-2 block">{label}</span>
       {children}
     </label>
@@ -179,7 +179,7 @@ function PasswordToggleButton({ visible, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-slate-400 transition hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-200"
+      className="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-slate-500 transition hover:text-slate-200"
       aria-label={visible ? 'Şifreyi gizle' : 'Şifreyi göster'}
     >
       {visible ? <EyeOpenIcon /> : <EyeClosedIcon />}

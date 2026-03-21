@@ -567,7 +567,7 @@ function App() {
     console.log('Scenario 1 - login screen visible: no token present')
 
     return (
-      <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-950">
+      <div className="flex min-h-screen flex-col bg-slate-950">
         <main className="flex flex-1">
           <AuthScreen
             mode={authMode}
@@ -579,7 +579,7 @@ function App() {
             onSubmit={handleAuthSubmit}
           />
         </main>
-        <Footer />
+        <Footer inverted />
       </div>
     )
   }
