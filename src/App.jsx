@@ -3,6 +3,7 @@ import { AuthScreen } from './components/AuthScreen'
 import { ClusterModal } from './components/ClusterModal'
 import { ClusterSidebar } from './components/ClusterSidebar'
 import { ConsumerGroupsSection } from './components/ConsumerGroupsSection'
+import { Footer } from './components/Footer'
 import { MessageViewer } from './components/MessageViewer'
 import { Skeleton } from './components/Skeleton'
 import { TopicModal } from './components/TopicModal'
@@ -33,6 +34,11 @@ const INITIAL_TOPIC_FORM = {
 const INITIAL_CLUSTER_FORM = {
   name: '',
   bootstrapServers: 'localhost:9092',
+}
+const INITIAL_AUTH_FORM = {
+  email: '',
+  password: '',
+  confirmPassword: '',
 }
 
 function getInitialTheme() {
@@ -65,7 +71,7 @@ function App() {
   const [expandedGroupId, setExpandedGroupId] = useState(null)
 
   const [authMode, setAuthMode] = useState('login')
-  const [authForm, setAuthForm] = useState({ email: '', password: '' })
+  const [authForm, setAuthForm] = useState(INITIAL_AUTH_FORM)
 
   const [authError, setAuthError] = useState('')
   const [clusterError, setClusterError] = useState('')
@@ -125,7 +131,7 @@ function App() {
     setClusterError('')
     setAuthError('')
     setAuthMode('login')
-    setAuthForm({ email: '', password: '' })
+    setAuthForm(INITIAL_AUTH_FORM)
     setConfirmingClusterId(null)
   }, [resetDashboardData])
 
@@ -272,6 +278,11 @@ function App() {
   }, [loadClusterDashboard, selectedClusterId, token])
 
   async function handleAuthSubmit() {
+    if (authMode === 'register' && authForm.password !== authForm.confirmPassword) {
+      setAuthError('Şifreler eşleşmiyor')
+      return
+    }
+
     setAuthLoading(true)
     setAuthError('')
 
@@ -288,7 +299,7 @@ function App() {
       safeSetState(() => {
         setToken(response.token)
         setView('dashboard')
-        setAuthForm({ email: '', password: '' })
+        setAuthForm(INITIAL_AUTH_FORM)
       })
 
       console.log(
@@ -551,39 +562,45 @@ function App() {
     console.log('Scenario 1 - login screen visible: no token present')
 
     return (
-      <AuthScreen
-        mode={authMode}
-        form={authForm}
-        loading={authLoading}
-        error={authError}
-        onModeChange={setAuthMode}
-        onFormChange={setAuthForm}
-        onSubmit={handleAuthSubmit}
-      />
+      <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-950">
+        <main className="flex flex-1">
+          <AuthScreen
+            mode={authMode}
+            form={authForm}
+            loading={authLoading}
+            error={authError}
+            onModeChange={setAuthMode}
+            onFormChange={setAuthForm}
+            onSubmit={handleAuthSubmit}
+          />
+        </main>
+        <Footer />
+      </div>
     )
   }
 
   return (
-    <div className="min-h-screen overflow-hidden bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
-      <div className="mx-auto flex min-h-screen max-w-[1600px] gap-6 px-6 py-6">
-        <ClusterSidebar
-          clusters={clusters}
-          selectedClusterId={selectedClusterId}
-          confirmingClusterId={confirmingClusterId}
-          onSelect={setSelectedClusterId}
-          onOpenCreate={() => setIsClusterModalOpen(true)}
-          onRequestDelete={handleRequestDeleteCluster}
-          onCancelDelete={handleCancelDeleteCluster}
-          onConfirmDelete={handleConfirmDeleteCluster}
-          loading={clustersLoading}
-          deletingClusterId={deletingClusterId}
-          error={clusterError}
-          onLogout={handleLogout}
-          theme={theme}
-          onToggleTheme={handleToggleTheme}
-        />
+    <div className="flex min-h-screen flex-col overflow-hidden bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+      <main className="min-h-0 flex-1">
+        <div className="mx-auto flex h-full min-h-0 max-w-[1600px] gap-6 px-6 py-6">
+          <ClusterSidebar
+            clusters={clusters}
+            selectedClusterId={selectedClusterId}
+            confirmingClusterId={confirmingClusterId}
+            onSelect={setSelectedClusterId}
+            onOpenCreate={() => setIsClusterModalOpen(true)}
+            onRequestDelete={handleRequestDeleteCluster}
+            onCancelDelete={handleCancelDeleteCluster}
+            onConfirmDelete={handleConfirmDeleteCluster}
+            loading={clustersLoading}
+            deletingClusterId={deletingClusterId}
+            error={clusterError}
+            onLogout={handleLogout}
+            theme={theme}
+            onToggleTheme={handleToggleTheme}
+          />
 
-        <main className="min-h-0 flex-1 overflow-y-auto pr-2">
+          <section className="min-h-0 flex-1 overflow-y-auto pr-2">
           {!selectedCluster ? (
             <section className="flex min-h-full items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center shadow-sm dark:border-slate-700 dark:bg-slate-800">
               <div>
@@ -711,8 +728,9 @@ function App() {
               />
             </div>
           )}
-        </main>
-      </div>
+          </section>
+        </div>
+      </main>
 
       <TopicModal
         open={isTopicModalOpen}
@@ -741,6 +759,7 @@ function App() {
         loading={clusterActionLoading}
         error={createClusterError}
       />
+      <Footer />
     </div>
   )
 }
