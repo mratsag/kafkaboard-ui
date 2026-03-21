@@ -52,6 +52,8 @@ function App() {
   const [topicForm, setTopicForm] = useState(INITIAL_TOPIC_FORM)
 
   useEffect(() => {
+    isMountedRef.current = true
+
     return () => {
       isMountedRef.current = false
     }
