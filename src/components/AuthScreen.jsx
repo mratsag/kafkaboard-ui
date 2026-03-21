@@ -20,8 +20,8 @@ export function AuthScreen({
   }
 
   return (
-    <div className="grid min-h-full flex-1 w-full grid-cols-2 text-slate-900 dark:text-slate-100">
-      <section className="flex min-h-full items-center bg-slate-900 px-12 py-12 text-white dark:bg-slate-950">
+    <div className="flex min-h-full flex-1 text-slate-900 dark:text-slate-100">
+      <section className="flex w-2/5 flex-col justify-center bg-slate-900 px-16 py-12 text-white dark:bg-slate-950">
         <div className="mx-auto flex w-full max-w-xl flex-col justify-center">
           <p className="text-sm font-medium uppercase tracking-wider text-violet-300">
             kafkaboard
@@ -50,7 +50,7 @@ export function AuthScreen({
         </div>
       </section>
 
-      <section className="flex min-h-full flex-col items-center justify-center bg-white px-12 py-12 dark:bg-slate-900">
+      <section className="flex w-3/5 flex-col items-center justify-center bg-white px-16 py-12 dark:bg-slate-900">
         <form
           className="w-full max-w-md"
           onSubmit={(event) => {
