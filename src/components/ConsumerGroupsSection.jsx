@@ -1,11 +1,13 @@
+import { Skeleton } from './Skeleton'
+
 function lagTone(totalLag) {
   if (totalLag > 100) {
-    return 'text-rose-600'
+    return 'text-rose-600 dark:text-rose-300'
   }
   if (totalLag > 0) {
-    return 'text-amber-600'
+    return 'text-amber-600 dark:text-amber-300'
   }
-  return 'text-emerald-600'
+  return 'text-emerald-600 dark:text-emerald-300'
 }
 
 export function ConsumerGroupsSection({
@@ -16,42 +18,53 @@ export function ConsumerGroupsSection({
   error,
 }) {
   return (
-    <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+    <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+        <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
           Consumer Groups
         </p>
-        <h2 className="mt-3 text-2xl font-semibold text-slate-950">
+        <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
           Lag Overview
         </h2>
       </div>
 
       {error ? (
-        <p className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-          {error}
-        </p>
+        <div className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200">
+          <p className="font-semibold">Consumer group hatası</p>
+          <p className="mt-1">{error}</p>
+        </div>
       ) : null}
 
-      <div className="mt-6 overflow-hidden rounded-3xl border border-slate-200">
-        <table className="min-w-full divide-y divide-slate-200 text-left">
-          <thead className="bg-slate-100 text-xs uppercase tracking-[0.24em] text-slate-500">
+      <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700">
+        <table className="min-w-full divide-y divide-slate-100 text-left dark:divide-slate-700">
+          <thead className="bg-slate-50 text-xs font-medium uppercase tracking-wider text-slate-500 dark:bg-slate-900 dark:text-slate-400">
             <tr>
-              <th className="px-5 py-4">Group ID</th>
-              <th className="px-5 py-4">State</th>
-              <th className="px-5 py-4">Total Lag</th>
+              <th className="px-4 py-3">Group ID</th>
+              <th className="px-4 py-3">State</th>
+              <th className="px-4 py-3">Total Lag</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 bg-white text-sm text-slate-700">
+          <tbody className="divide-y divide-slate-100 bg-white text-sm text-slate-700 dark:divide-slate-700 dark:bg-slate-800 dark:text-slate-300">
             {loading ? (
-              <tr>
-                <td className="px-5 py-8 text-slate-500" colSpan="3">
-                  Consumer group verisi yükleniyor...
-                </td>
-              </tr>
+              Array.from({ length: 4 }).map((_, index) => (
+                <tr key={index}>
+                  <td className="px-4 py-3"><Skeleton variant="row" className="w-36" /></td>
+                  <td className="px-4 py-3"><Skeleton variant="row" className="w-16" /></td>
+                  <td className="px-4 py-3"><Skeleton variant="row" className="w-12" /></td>
+                </tr>
+              ))
             ) : groups.length === 0 ? (
               <tr>
-                <td className="px-5 py-8 text-slate-500" colSpan="3">
-                  Consumer group bulunamadı.
+                <td className="px-4 py-12" colSpan="3">
+                  <div className="text-center">
+                    <div className="text-4xl">🧭</div>
+                    <p className="mt-3 text-sm font-semibold text-slate-900 dark:text-slate-100">
+                      Henüz consumer group yok
+                    </p>
+                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                      Offset commit eden bir consumer çalıştığında burada görünecek.
+                    </p>
+                  </div>
                 </td>
               </tr>
             ) : (
@@ -80,20 +93,22 @@ function FragmentRow({ group, expanded, onToggle }) {
     <>
       <tr
         onClick={() => onToggle(group.groupId)}
-        className="cursor-pointer transition hover:bg-slate-50"
+        className="cursor-pointer transition hover:bg-slate-50 dark:hover:bg-slate-700/50"
       >
-        <td className="px-5 py-4 font-medium text-slate-950">{group.groupId}</td>
-        <td className="px-5 py-4">{group.state}</td>
-        <td className={`px-5 py-4 font-semibold ${lagTone(group.totalLag)}`}>
+        <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
+          {group.groupId}
+        </td>
+        <td className="px-4 py-3">{group.state}</td>
+        <td className={`px-4 py-3 font-semibold ${lagTone(group.totalLag)}`}>
           {group.totalLag}
         </td>
       </tr>
       {expanded ? (
-        <tr className="bg-slate-50/70">
-          <td colSpan="3" className="px-5 py-4">
-            <div className="rounded-2xl border border-slate-200 bg-white">
-              <table className="min-w-full divide-y divide-slate-200 text-left">
-                <thead className="bg-slate-100 text-xs uppercase tracking-[0.22em] text-slate-500">
+        <tr className="bg-slate-50 dark:bg-slate-900/40">
+          <td colSpan="3" className="px-4 py-3">
+            <div className="rounded-xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
+              <table className="min-w-full divide-y divide-slate-100 text-left dark:divide-slate-700">
+                <thead className="bg-slate-50 text-xs font-medium uppercase tracking-wider text-slate-500 dark:bg-slate-900 dark:text-slate-400">
                   <tr>
                     <th className="px-4 py-3">Topic</th>
                     <th className="px-4 py-3">Partition</th>
@@ -102,9 +117,9 @@ function FragmentRow({ group, expanded, onToggle }) {
                     <th className="px-4 py-3">Lag</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
+                <tbody className="divide-y divide-slate-100 bg-white text-sm text-slate-700 dark:divide-slate-700 dark:bg-slate-800 dark:text-slate-300">
                   {group.partitionLags.map((partitionLag) => (
-                    <tr key={`${partitionLag.topic}-${partitionLag.partition}`}>
+                    <tr key={`${partitionLag.topic}-${partitionLag.partition}`} className="transition hover:bg-slate-50 dark:hover:bg-slate-700/50">
                       <td className="px-4 py-3">{partitionLag.topic}</td>
                       <td className="px-4 py-3">{partitionLag.partition}</td>
                       <td className="px-4 py-3">{partitionLag.currentOffset}</td>

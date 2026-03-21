@@ -1,68 +1,91 @@
 export function ClusterSidebar({
   clusters,
   selectedClusterId,
+  confirmingClusterId,
   onSelect,
   onOpenCreate,
-  onDelete,
+  onRequestDelete,
+  onCancelDelete,
+  onConfirmDelete,
   loading,
   deletingClusterId,
   error,
   onLogout,
+  theme,
+  onToggleTheme,
 }) {
   return (
-    <aside className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
-      <div className="flex items-start justify-between gap-4">
+    <aside className="flex h-full w-64 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:shadow-2xl">
+      <div className="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-5 dark:border-slate-800">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
-            Clusters
+          <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            Workspace
           </p>
-          <h2 className="mt-3 text-2xl font-semibold text-slate-950">
-            Saved Targets
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
+            kafkaboard
           </h2>
         </div>
-        <button
-          type="button"
-          onClick={onLogout}
-          className="rounded-2xl border border-slate-300 px-4 py-2 text-xs font-semibold text-slate-700 transition hover:border-slate-500 hover:text-slate-950"
-        >
-          Logout
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onToggleTheme}
+            className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
+        </div>
       </div>
 
-      <button
-        type="button"
-        onClick={onOpenCreate}
-        className="mt-6 h-11 w-full rounded-2xl bg-slate-950 text-sm font-semibold text-white transition hover:bg-slate-800"
-      >
-        Yeni Cluster Ekle
-      </button>
+      <div className="px-5 py-5">
+        <button
+          type="button"
+          onClick={onOpenCreate}
+          className="w-full rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-violet-700"
+        >
+          Yeni Cluster Ekle
+        </button>
 
-      {error ? (
-        <p className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-          {error}
-        </p>
-      ) : null}
+        {error ? (
+          <div className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200">
+            <p className="font-semibold">Cluster hatası</p>
+            <p className="mt-1">{error}</p>
+          </div>
+        ) : null}
+      </div>
 
-      <div className="mt-6 space-y-3">
+      <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 pb-4">
         {loading ? (
-          <p className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-500">
-            Cluster listesi yükleniyor...
-          </p>
+          <div className="space-y-3">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div
+                key={index}
+                className="h-24 animate-pulse rounded-2xl bg-slate-100 dark:bg-slate-800"
+              />
+            ))}
+          </div>
         ) : clusters.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-sm text-slate-500">
-            Kayıtlı cluster bulunamadı.
-          </p>
+          <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-5 py-8 text-center dark:border-slate-700 dark:bg-slate-800/60">
+            <div className="text-3xl">🛰️</div>
+            <p className="mt-3 text-sm font-semibold text-slate-900 dark:text-slate-100">
+              Henüz cluster yok
+            </p>
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+              Sol panelden yeni bir Kafka cluster kaydı ekleyin.
+            </p>
+          </div>
         ) : (
           clusters.map((cluster) => {
             const selected = cluster.id === selectedClusterId
+            const confirming = cluster.id === confirmingClusterId
 
             return (
               <div
                 key={cluster.id}
-                className={`block w-full rounded-3xl border px-4 py-4 text-left transition ${
+                className={`rounded-xl border-l-2 px-4 py-4 text-left transition ${
                   selected
-                    ? 'border-slate-950 bg-slate-950 text-white shadow-[0_18px_45px_rgba(15,23,42,0.18)]'
-                    : 'border-slate-200 bg-slate-50 text-slate-900 hover:border-slate-400 hover:bg-white'
+                    ? 'border-violet-400 bg-violet-50 dark:bg-slate-700'
+                    : 'border-transparent bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/70 dark:hover:bg-slate-800'
                 }`}
               >
                 <div className="flex items-start justify-between gap-3">
@@ -71,32 +94,65 @@ export function ClusterSidebar({
                     onClick={() => onSelect(cluster.id)}
                     className="min-w-0 flex-1 text-left"
                   >
-                    <p className="truncate text-sm font-semibold">{cluster.name}</p>
-                    <p
-                      className={`mt-2 truncate text-xs ${
-                        selected ? 'text-slate-300' : 'text-slate-500'
-                      }`}
-                    >
+                    <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
+                      {cluster.name}
+                    </p>
+                    <p className="mt-2 truncate text-xs text-slate-500 dark:text-slate-400">
                       {cluster.bootstrapServers}
                     </p>
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => onDelete(cluster.id)}
-                    disabled={deletingClusterId === cluster.id}
-                    className={`shrink-0 rounded-xl px-3 py-2 text-[11px] font-semibold transition ${
-                      selected
-                        ? 'border border-white/20 text-white hover:bg-white/10'
-                        : 'border border-rose-200 text-rose-700 hover:bg-rose-50'
-                    } disabled:cursor-not-allowed disabled:opacity-50`}
-                  >
-                    {deletingClusterId === cluster.id ? 'Siliniyor...' : 'Sil'}
-                  </button>
+                  {confirming ? (
+                    <div className="flex shrink-0 items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => onConfirmDelete(cluster.id)}
+                        disabled={deletingClusterId === cluster.id}
+                        className="rounded-lg bg-rose-500 px-3 py-2 text-[11px] font-semibold text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        Evet
+                      </button>
+                      <button
+                        type="button"
+                        onClick={onCancelDelete}
+                        className="rounded-lg border border-slate-200 px-3 py-2 text-[11px] font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700"
+                      >
+                        Hayır
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => onRequestDelete(cluster.id)}
+                      disabled={deletingClusterId === cluster.id}
+                      className="shrink-0 rounded-lg p-2 text-[11px] font-semibold text-rose-500 transition hover:bg-rose-50 hover:text-rose-700 disabled:cursor-not-allowed disabled:opacity-50 dark:text-rose-300 dark:hover:bg-slate-700 dark:hover:text-rose-200"
+                    >
+                      Sil
+                    </button>
+                  )}
                 </div>
+                {confirming ? (
+                  <p className="mt-3 text-xs font-medium text-rose-700 dark:text-rose-200">
+                    Emin misiniz? Bu kayıt sidebar’dan kaldırılacak.
+                  </p>
+                ) : null}
               </div>
             )
           })
         )}
+      </div>
+
+      <div className="border-t border-slate-200 px-5 py-4 dark:border-slate-800">
+        <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-500">
+          Session
+        </p>
+        <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">Authenticated user</p>
+        <button
+          type="button"
+          onClick={onLogout}
+          className="mt-4 w-full rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-800"
+        >
+          Logout
+        </button>
       </div>
     </aside>
   )

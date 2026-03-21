@@ -4,6 +4,7 @@ import { ClusterModal } from './components/ClusterModal'
 import { ClusterSidebar } from './components/ClusterSidebar'
 import { ConsumerGroupsSection } from './components/ConsumerGroupsSection'
 import { MessageViewer } from './components/MessageViewer'
+import { Skeleton } from './components/Skeleton'
 import { TopicModal } from './components/TopicModal'
 import { TopicSection } from './components/TopicSection'
 import {
@@ -23,6 +24,7 @@ import {
   setUnauthorizedHandler,
 } from './lib/api'
 
+const THEME_STORAGE_KEY = 'kafkaboard_theme'
 const INITIAL_TOPIC_FORM = {
   topicName: '',
   partitions: '1',
@@ -33,11 +35,23 @@ const INITIAL_CLUSTER_FORM = {
   bootstrapServers: 'localhost:9092',
 }
 
+function getInitialTheme() {
+  const savedTheme = localStorage.getItem(THEME_STORAGE_KEY)
+  if (savedTheme === 'light' || savedTheme === 'dark') {
+    return savedTheme
+  }
+
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light'
+}
+
 function App() {
   const isMountedRef = useRef(true)
 
   const [view, setView] = useState(getToken() ? 'dashboard' : 'login')
   const [token, setToken] = useState(() => getToken())
+  const [theme, setTheme] = useState(getInitialTheme)
 
   const [clusters, setClusters] = useState([])
   const [selectedClusterId, setSelectedClusterId] = useState(null)
@@ -73,6 +87,9 @@ function App() {
   const [deletingTopic, setDeletingTopic] = useState('')
   const [deletingClusterId, setDeletingClusterId] = useState('')
 
+  const [confirmingClusterId, setConfirmingClusterId] = useState(null)
+  const [confirmingTopicName, setConfirmingTopicName] = useState(null)
+
   const [isTopicModalOpen, setIsTopicModalOpen] = useState(false)
   const [isClusterModalOpen, setIsClusterModalOpen] = useState(false)
   const [topicForm, setTopicForm] = useState(INITIAL_TOPIC_FORM)
@@ -95,6 +112,7 @@ function App() {
     setTopicsError('')
     setGroupsError('')
     setMessagesError('')
+    setConfirmingTopicName(null)
   }, [])
 
   const resetToLoginState = useCallback(() => {
@@ -108,6 +126,7 @@ function App() {
     setAuthError('')
     setAuthMode('login')
     setAuthForm({ email: '', password: '' })
+    setConfirmingClusterId(null)
   }, [resetDashboardData])
 
   const loadClusters = useCallback(async (preferredClusterId = null) => {
@@ -215,6 +234,16 @@ function App() {
   }, [])
 
   useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+
+    localStorage.setItem(THEME_STORAGE_KEY, theme)
+  }, [theme])
+
+  useEffect(() => {
     setUnauthorizedHandler(() => {
       safeSetState(() => {
         resetToLoginState()
@@ -283,6 +312,10 @@ function App() {
     resetToLoginState()
   }
 
+  function handleToggleTheme() {
+    setTheme((current) => (current === 'dark' ? 'light' : 'dark'))
+  }
+
   function handleTopicFormChange(event) {
     const { name, value } = event.target
     setTopicForm((current) => ({
@@ -329,16 +362,15 @@ function App() {
     }
   }
 
-  async function handleDeleteCluster(clusterId) {
-    const cluster = clusters.find((item) => item.id === clusterId)
-    const confirmed = window.confirm(
-      `${cluster?.name ?? 'Cluster'} kaydını silmek istediğinize emin misiniz?`,
-    )
+  function handleRequestDeleteCluster(clusterId) {
+    setConfirmingClusterId(clusterId)
+  }
 
-    if (!confirmed) {
-      return
-    }
+  function handleCancelDeleteCluster() {
+    setConfirmingClusterId(null)
+  }
 
+  async function handleConfirmDeleteCluster(clusterId) {
     const nextRemainingClusters = clusters.filter((item) => item.id !== clusterId)
 
     setDeletingClusterId(clusterId)
@@ -349,6 +381,7 @@ function App() {
 
       safeSetState(() => {
         setClusters(nextRemainingClusters)
+        setConfirmingClusterId(null)
         if (selectedClusterId === clusterId) {
           setSelectedClusterId(nextRemainingClusters[0]?.id ?? null)
           resetDashboardData()
@@ -425,16 +458,16 @@ function App() {
     }
   }
 
-  async function handleDeleteTopic(topicName) {
+  function handleRequestDeleteTopic(topicName) {
+    setConfirmingTopicName(topicName)
+  }
+
+  function handleCancelDeleteTopic() {
+    setConfirmingTopicName(null)
+  }
+
+  async function handleConfirmDeleteTopic(topicName) {
     if (!selectedClusterId) {
-      return
-    }
-
-    const confirmed = window.confirm(
-      `${topicName} topic'ini silmek istediğinize emin misiniz?`,
-    )
-
-    if (!confirmed) {
       return
     }
 
@@ -447,6 +480,7 @@ function App() {
       if (selectedTopic === topicName) {
         setMessages([])
       }
+      setConfirmingTopicName(null)
       console.log('Scenario 6 - topic deleted:', topicName)
     } catch (error) {
       setTopicsError(error instanceof Error ? error.message : 'Unknown error')
@@ -530,117 +564,153 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(14,165,233,0.15),_transparent_28%),linear-gradient(180deg,#f8fafc_0%,#eef2ff_38%,#f8fafc_100%)] text-slate-900">
-      <div className="mx-auto grid min-h-screen w-[1440px] max-w-full grid-cols-[320px_1fr] gap-8 px-8 py-8">
+    <div className="min-h-screen overflow-hidden bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+      <div className="mx-auto flex min-h-screen max-w-[1600px] gap-6 px-6 py-6">
         <ClusterSidebar
           clusters={clusters}
           selectedClusterId={selectedClusterId}
+          confirmingClusterId={confirmingClusterId}
           onSelect={setSelectedClusterId}
           onOpenCreate={() => setIsClusterModalOpen(true)}
-          onDelete={handleDeleteCluster}
+          onRequestDelete={handleRequestDeleteCluster}
+          onCancelDelete={handleCancelDeleteCluster}
+          onConfirmDelete={handleConfirmDeleteCluster}
           loading={clustersLoading}
           deletingClusterId={deletingClusterId}
           error={clusterError}
           onLogout={handleLogout}
+          theme={theme}
+          onToggleTheme={handleToggleTheme}
         />
 
-        <main className="flex flex-col gap-8">
-          <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
-            <div className="flex items-start justify-between gap-6">
+        <main className="min-h-0 flex-1 overflow-y-auto pr-2">
+          {!selectedCluster ? (
+            <section className="flex min-h-full items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center shadow-sm dark:border-slate-700 dark:bg-slate-800">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
-                  Selected Cluster
-                </p>
-                <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-950">
-                  Kafka Cluster Control Room
+                <div className="text-6xl">🛰️</div>
+                <h1 className="mt-6 text-4xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+                  Cluster seçilmedi
                 </h1>
-                <p className="mt-3 max-w-3xl text-sm text-slate-600">
-                  {selectedCluster
-                    ? `${selectedCluster.name} • ${selectedCluster.bootstrapServers}`
-                    : 'Sağ paneli doldurmak için soldan bir cluster seçin veya yeni cluster ekleyin.'}
+                <p className="mt-4 max-w-xl text-sm text-slate-600 dark:text-slate-400">
+                  Soldan kayıtlı bir cluster seçin veya yeni cluster ekleyin. Health,
+                  topics, consumer groups ve messages paneli seçimden sonra açılır.
                 </p>
               </div>
-              {health ? (
-                <span
-                  className={`inline-flex items-center rounded-full px-4 py-2 text-xs font-semibold ring-1 ${
-                    health.status === 'HEALTHY'
-                      ? 'bg-emerald-100 text-emerald-700 ring-emerald-200'
-                      : health.status === 'DEGRADED'
-                        ? 'bg-amber-100 text-amber-700 ring-amber-200'
-                        : 'bg-rose-100 text-rose-700 ring-rose-200'
-                  }`}
-                >
-                  {health.status}
-                </span>
-              ) : null}
+            </section>
+          ) : (
+            <div className="flex flex-col gap-6">
+              <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+                <div className="flex items-center justify-between gap-6">
+                  <div>
+                    <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                      Cluster Overview
+                    </p>
+                    <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+                      {selectedCluster.name}
+                    </h1>
+                    <p className="mt-2 max-w-3xl text-sm text-slate-600 dark:text-slate-400">
+                      {selectedCluster.bootstrapServers}
+                    </p>
+                  </div>
+                  {healthLoading ? (
+                    <Skeleton variant="badge" />
+                  ) : health ? (
+                    <span
+                      className={`inline-flex items-center rounded-full px-4 py-2 text-xs font-semibold ring-1 ${
+                        health.status === 'HEALTHY'
+                          ? 'bg-emerald-100 text-emerald-700 ring-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:ring-emerald-500/30'
+                          : health.status === 'DEGRADED'
+                            ? 'bg-amber-100 text-amber-700 ring-amber-200 dark:bg-amber-500/15 dark:text-amber-300 dark:ring-amber-500/30'
+                            : 'bg-rose-100 text-rose-700 ring-rose-200 dark:bg-rose-500/15 dark:text-rose-300 dark:ring-rose-500/30'
+                      }`}
+                    >
+                      {health.status}
+                    </span>
+                  ) : null}
+                </div>
+
+                <div className="mt-6 grid grid-cols-3 gap-4">
+                  {healthLoading ? (
+                    <>
+                      <Skeleton variant="card" />
+                      <Skeleton variant="card" />
+                      <Skeleton variant="card" />
+                    </>
+                  ) : (
+                    <>
+                      <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-800">
+                        <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                          Cluster ID
+                        </p>
+                        <p className="mt-2 truncate text-sm text-slate-900 dark:text-slate-100">
+                          {health?.clusterId ?? selectedCluster.id}
+                        </p>
+                      </div>
+                      <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-800">
+                        <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                          Node Count
+                        </p>
+                        <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+                          {health?.nodeCount ?? '-'}
+                        </p>
+                      </div>
+                      <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-800">
+                        <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                          Topic Count
+                        </p>
+                        <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+                          {health?.topicCount ?? '-'}
+                        </p>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {healthError ? (
+                  <div className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200">
+                    <p className="font-semibold">Health hatası</p>
+                    <p className="mt-1">{healthError}</p>
+                  </div>
+                ) : null}
+              </section>
+
+              <div className="grid grid-cols-[1.25fr_0.95fr] gap-6">
+                <TopicSection
+                  topics={topics}
+                  loading={topicsLoading}
+                  error={topicsError}
+                  deletingTopic={deletingTopic}
+                  confirmingTopicName={confirmingTopicName}
+                  onOpenCreate={() => setIsTopicModalOpen(true)}
+                  onRequestDelete={handleRequestDeleteTopic}
+                  onCancelDelete={handleCancelDeleteTopic}
+                  onConfirmDelete={handleConfirmDeleteTopic}
+                  disabled={!selectedClusterId}
+                />
+
+                <MessageViewer
+                  topics={topics}
+                  selectedTopic={selectedTopic}
+                  onTopicChange={setSelectedTopic}
+                  limit={messageLimit}
+                  onLimitChange={setMessageLimit}
+                  onFetch={handleFetchMessages}
+                  loading={messagesLoading}
+                  error={messagesError}
+                  messages={messages}
+                  disabled={!selectedClusterId}
+                />
+              </div>
+
+              <ConsumerGroupsSection
+                groups={consumerGroups}
+                expandedGroupId={expandedGroupId}
+                onToggle={handleToggleGroup}
+                loading={groupsLoading}
+                error={groupsError}
+              />
             </div>
-
-            <div className="mt-8 grid grid-cols-3 gap-4">
-              <div className="rounded-2xl bg-slate-950 px-5 py-4 text-white">
-                <p className="text-xs uppercase tracking-[0.28em] text-slate-400">
-                  Cluster ID
-                </p>
-                <p className="mt-3 truncate text-sm font-medium">
-                  {health?.clusterId ?? selectedCluster?.id ?? 'Cluster seçilmedi'}
-                </p>
-              </div>
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4">
-                <p className="text-xs uppercase tracking-[0.28em] text-slate-500">
-                  Node Count
-                </p>
-                <p className="mt-3 text-3xl font-semibold text-slate-950">
-                  {healthLoading ? '...' : health?.nodeCount ?? '-'}
-                </p>
-              </div>
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4">
-                <p className="text-xs uppercase tracking-[0.28em] text-slate-500">
-                  Topic Count
-                </p>
-                <p className="mt-3 text-3xl font-semibold text-slate-950">
-                  {healthLoading ? '...' : health?.topicCount ?? '-'}
-                </p>
-              </div>
-            </div>
-
-            {healthError ? (
-              <p className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-                {healthError}
-              </p>
-            ) : null}
-          </section>
-
-          <div className="grid grid-cols-[1.25fr_0.95fr] gap-8">
-            <TopicSection
-              topics={topics}
-              loading={topicsLoading}
-              error={topicsError}
-              deletingTopic={deletingTopic}
-              onOpenCreate={() => setIsTopicModalOpen(true)}
-              onDelete={handleDeleteTopic}
-              disabled={!selectedClusterId}
-            />
-
-            <MessageViewer
-              topics={topics}
-              selectedTopic={selectedTopic}
-              onTopicChange={setSelectedTopic}
-              limit={messageLimit}
-              onLimitChange={setMessageLimit}
-              onFetch={handleFetchMessages}
-              loading={messagesLoading}
-              error={messagesError}
-              messages={messages}
-              disabled={!selectedClusterId}
-            />
-          </div>
-
-          <ConsumerGroupsSection
-            groups={consumerGroups}
-            expandedGroupId={expandedGroupId}
-            onToggle={handleToggleGroup}
-            loading={groupsLoading}
-            error={groupsError}
-          />
+          )}
         </main>
       </div>
 

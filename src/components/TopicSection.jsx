@@ -1,20 +1,25 @@
+import { Skeleton } from './Skeleton'
+
 export function TopicSection({
   topics,
   loading,
   error,
   deletingTopic,
+  confirmingTopicName,
   onOpenCreate,
-  onDelete,
+  onRequestDelete,
+  onCancelDelete,
+  onConfirmDelete,
   disabled,
 }) {
   return (
-    <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+    <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+          <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
             Topics
           </p>
-          <h2 className="mt-3 text-2xl font-semibold text-slate-950">
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
             Topic Listesi
           </h2>
         </div>
@@ -22,58 +27,94 @@ export function TopicSection({
           type="button"
           onClick={onOpenCreate}
           disabled={disabled}
-          className="rounded-2xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-600"
+          className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
           Yeni Topic
         </button>
       </div>
 
       {error ? (
-        <p className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-          {error}
-        </p>
+        <div className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200">
+          <p className="font-semibold">Topic hatası</p>
+          <p className="mt-1">{error}</p>
+        </div>
       ) : null}
 
-      <div className="mt-6 overflow-hidden rounded-3xl border border-slate-200">
-        <table className="min-w-full divide-y divide-slate-200 text-left">
-          <thead className="bg-slate-100 text-xs uppercase tracking-[0.24em] text-slate-500">
+      <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700">
+        <table className="min-w-full divide-y divide-slate-100 text-left dark:divide-slate-700">
+          <thead className="bg-slate-50 text-xs font-medium uppercase tracking-wider text-slate-500 dark:bg-slate-900 dark:text-slate-400">
             <tr>
-              <th className="px-5 py-4">Topic</th>
-              <th className="px-5 py-4">Partitions</th>
-              <th className="px-5 py-4">Replication</th>
-              <th className="px-5 py-4 text-right">Actions</th>
+              <th className="px-4 py-3">Topic</th>
+              <th className="px-4 py-3">Partitions</th>
+              <th className="px-4 py-3">Replication</th>
+              <th className="px-4 py-3 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 bg-white text-sm text-slate-700">
+          <tbody className="divide-y divide-slate-100 bg-white text-sm text-slate-700 dark:divide-slate-700 dark:bg-slate-800 dark:text-slate-300">
             {loading ? (
-              <tr>
-                <td className="px-5 py-8 text-slate-500" colSpan="4">
-                  Topic listesi yükleniyor...
-                </td>
-              </tr>
+              Array.from({ length: 5 }).map((_, index) => (
+                <tr key={index}>
+                  <td className="px-4 py-3"><Skeleton variant="row" className="w-40" /></td>
+                  <td className="px-4 py-3"><Skeleton variant="row" className="w-12" /></td>
+                  <td className="px-4 py-3"><Skeleton variant="row" className="w-12" /></td>
+                  <td className="px-4 py-3 text-right">
+                    <Skeleton variant="row" className="ml-auto w-20 rounded-xl" />
+                  </td>
+                </tr>
+              ))
             ) : topics.length === 0 ? (
               <tr>
-                <td className="px-5 py-8 text-slate-500" colSpan="4">
-                  {disabled ? 'Önce bir cluster seçin.' : 'Topic bulunamadı.'}
+                <td className="px-4 py-12" colSpan="4">
+                  <div className="text-center">
+                    <div className="text-4xl">{disabled ? '📡' : '🪹'}</div>
+                    <p className="mt-3 text-sm font-semibold text-slate-900 dark:text-slate-100">
+                      {disabled ? 'Cluster seçilmedi' : 'Henüz topic yok'}
+                    </p>
+                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                      {disabled
+                        ? 'Önce soldan bir cluster seçin.'
+                        : 'Bu cluster için ilk topic kaydını oluşturabilirsiniz.'}
+                    </p>
+                  </div>
                 </td>
               </tr>
             ) : (
               topics.map((topic) => (
-                <tr key={topic.name}>
-                  <td className="px-5 py-4 font-medium text-slate-950">
+                <tr key={topic.name} className="transition hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                  <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
                     {topic.name}
                   </td>
-                  <td className="px-5 py-4">{topic.partitionCount}</td>
-                  <td className="px-5 py-4">{topic.replicationFactor}</td>
-                  <td className="px-5 py-4 text-right">
-                    <button
-                      type="button"
-                      onClick={() => onDelete(topic.name)}
-                      disabled={deletingTopic === topic.name}
-                      className="rounded-xl border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-700 transition hover:border-rose-400 hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      {deletingTopic === topic.name ? 'Siliniyor...' : 'Sil'}
-                    </button>
+                  <td className="px-4 py-3">{topic.partitionCount}</td>
+                  <td className="px-4 py-3">{topic.replicationFactor}</td>
+                  <td className="px-4 py-3 text-right">
+                    {confirmingTopicName === topic.name ? (
+                      <div className="inline-flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => onConfirmDelete(topic.name)}
+                          disabled={deletingTopic === topic.name}
+                          className="rounded-lg bg-rose-500 px-3 py-2 text-xs font-semibold text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          Evet
+                        </button>
+                        <button
+                          type="button"
+                          onClick={onCancelDelete}
+                          className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-900"
+                        >
+                          Hayır
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => onRequestDelete(topic.name)}
+                        disabled={deletingTopic === topic.name}
+                        className="rounded-lg px-3 py-2 text-xs font-semibold text-rose-500 transition hover:bg-rose-50 hover:text-rose-700 disabled:cursor-not-allowed disabled:opacity-50 dark:text-rose-300 dark:hover:bg-rose-500/10 dark:hover:text-rose-200"
+                      >
+                        {deletingTopic === topic.name ? 'Siliniyor...' : 'Sil'}
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))
