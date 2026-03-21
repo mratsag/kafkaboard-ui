@@ -287,3 +287,35 @@ export async function fetchTopicMessages(clusterId, topicName, limit) {
     `/api/clusters/${encodeURIComponent(clusterId)}/topics/${encodeURIComponent(topicName)}/messages?limit=${encodeURIComponent(limit)}`,
   )
 }
+
+export async function fetchProfile() {
+  return request('/api/profile')
+}
+
+export async function updateDisplayName(payload) {
+  return request('/api/profile/display-name', {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  })
+}
+
+export async function updateProfileEmail(payload) {
+  return request('/api/profile/email', {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  })
+}
+
+export async function updateProfilePassword(payload) {
+  return request('/api/profile/password', {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  })
+}
+
+export async function deleteProfile(payload) {
+  return request('/api/profile', {
+    method: 'DELETE',
+    body: JSON.stringify(payload),
+  })
+}
