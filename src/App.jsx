@@ -4,6 +4,7 @@ import { ClusterModal } from './components/ClusterModal'
 import { ClusterSidebar } from './components/ClusterSidebar'
 import { ConsumerGroupsSection } from './components/ConsumerGroupsSection'
 import { Footer } from './components/Footer'
+import { useConsumerGroupLag } from './hooks/useConsumerGroupLag'
 import { MessageViewer } from './components/MessageViewer'
 import { Skeleton } from './components/Skeleton'
 import { TopicModal } from './components/TopicModal'
@@ -102,6 +103,7 @@ function App() {
   const [isClusterModalOpen, setIsClusterModalOpen] = useState(false)
   const [topicForm, setTopicForm] = useState(INITIAL_TOPIC_FORM)
   const [clusterForm, setClusterForm] = useState(INITIAL_CLUSTER_FORM)
+  const lagStream = useConsumerGroupLag(selectedClusterId, token)
 
   function safeSetState(updater) {
     if (isMountedRef.current) {
@@ -121,6 +123,28 @@ function App() {
     setGroupsError('')
     setMessagesError('')
     setConfirmingTopicName(null)
+  }, [])
+
+  const loadConsumerGroupsOnly = useCallback(async (clusterId) => {
+    safeSetState(() => {
+      setGroupsLoading(true)
+      setGroupsError('')
+    })
+
+    try {
+      const groupsData = await fetchConsumerGroups(clusterId)
+      safeSetState(() => {
+        setConsumerGroups(groupsData)
+      })
+    } catch (error) {
+      safeSetState(() => {
+        setGroupsError(error instanceof Error ? error.message : 'Unknown error')
+      })
+    } finally {
+      safeSetState(() => {
+        setGroupsLoading(false)
+      })
+    }
   }, [])
 
   const resetToLoginState = useCallback(() => {
@@ -279,6 +303,29 @@ function App() {
 
     loadClusterDashboard(selectedClusterId)
   }, [loadClusterDashboard, selectedClusterId, token])
+
+  useEffect(() => {
+    if (lagStream.groups === null) {
+      return
+    }
+
+    setConsumerGroups(lagStream.groups)
+    setGroupsLoading(false)
+  }, [lagStream.groups])
+
+  useEffect(() => {
+    if (lagStream.error) {
+      setGroupsError(lagStream.error)
+      if (!lagStream.connected) {
+        setGroupsLoading(false)
+      }
+      return
+    }
+
+    if (lagStream.connected) {
+      setGroupsError('')
+    }
+  }, [lagStream.connected, lagStream.error])
 
   async function handleAuthSubmit() {
     if (authMode === 'register' && authForm.password !== authForm.confirmPassword) {
@@ -729,8 +776,14 @@ function App() {
                 groups={consumerGroups}
                 expandedGroupId={expandedGroupId}
                 onToggle={handleToggleGroup}
-                loading={groupsLoading}
+                onRefresh={() => {
+                  if (selectedClusterId) {
+                    loadConsumerGroupsOnly(selectedClusterId)
+                  }
+                }}
+                loading={groupsLoading || (lagStream.loading && consumerGroups.length === 0)}
                 error={groupsError}
+                connected={lagStream.connected}
               />
             </div>
           )}

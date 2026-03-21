@@ -14,18 +14,41 @@ export function ConsumerGroupsSection({
   groups,
   expandedGroupId,
   onToggle,
+  onRefresh,
   loading,
   error,
+  connected,
 }) {
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
-      <div>
-        <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
-          Consumer Groups
-        </p>
-        <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
-          Lag Overview
-        </h2>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            Consumer Groups
+          </p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+            Lag Overview
+          </h2>
+        </div>
+        <div className="flex items-center gap-3">
+          <span
+            className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${
+              connected
+                ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300'
+                : 'bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300'
+            }`}
+          >
+            <span>{connected ? '🟢' : '🔴'}</span>
+            <span>{connected ? 'Live' : 'Disconnected'}</span>
+          </span>
+          <button
+            type="button"
+            onClick={onRefresh}
+            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-900"
+          >
+            Yenile
+          </button>
+        </div>
       </div>
 
       {error ? (
