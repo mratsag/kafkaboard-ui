@@ -11,6 +11,7 @@ export function ClusterSidebar({
   deletingClusterId,
   error,
   onLogout,
+  userEmail,
   theme,
   onToggleTheme,
 }) {
@@ -145,7 +146,9 @@ export function ClusterSidebar({
         <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-500">
           Session
         </p>
-        <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">Authenticated user</p>
+        <p className="mt-2 max-w-[160px] truncate text-sm text-slate-600 dark:text-slate-300">
+          {userEmail}
+        </p>
         <button
           type="button"
           onClick={onLogout}

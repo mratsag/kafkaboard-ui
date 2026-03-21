@@ -19,6 +19,7 @@ import {
   fetchConsumerGroups,
   fetchTopicMessages,
   fetchTopics,
+  getEmail,
   getToken,
   login,
   register,
@@ -57,6 +58,7 @@ function App() {
 
   const [view, setView] = useState(getToken() ? 'dashboard' : 'login')
   const [token, setToken] = useState(() => getToken())
+  const [userEmail, setUserEmail] = useState(() => getEmail())
   const [theme, setTheme] = useState(getInitialTheme)
 
   const [clusters, setClusters] = useState([])
@@ -124,6 +126,7 @@ function App() {
   const resetToLoginState = useCallback(() => {
     clearToken()
     setToken(null)
+    setUserEmail('')
     setView('login')
     setClusters([])
     setSelectedClusterId(null)
@@ -296,8 +299,10 @@ function App() {
         authMode === 'login' ? await login(payload) : await register(payload)
 
       localStorage.setItem('kafkaboard_token', response.token)
+      localStorage.setItem('kafkaboard_email', payload.email)
       safeSetState(() => {
         setToken(response.token)
+        setUserEmail(payload.email)
         setView('dashboard')
         setAuthForm(INITIAL_AUTH_FORM)
       })
@@ -594,11 +599,12 @@ function App() {
             onConfirmDelete={handleConfirmDeleteCluster}
             loading={clustersLoading}
             deletingClusterId={deletingClusterId}
-            error={clusterError}
-            onLogout={handleLogout}
-            theme={theme}
-            onToggleTheme={handleToggleTheme}
-          />
+          error={clusterError}
+          onLogout={handleLogout}
+          userEmail={userEmail}
+          theme={theme}
+          onToggleTheme={handleToggleTheme}
+        />
 
           <section className="min-h-0 flex-1 overflow-y-auto pr-2">
           {!selectedCluster ? (
