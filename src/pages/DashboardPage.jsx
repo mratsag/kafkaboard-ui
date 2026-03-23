@@ -15,16 +15,16 @@ export function DashboardPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+      <section className="kb-panel">
         <div className="flex flex-wrap items-center justify-between gap-6">
           <div>
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            <p className="text-xs font-medium uppercase tracking-wider text-stone-500 dark:text-stone-400">
               Overview
             </p>
-            <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+            <h1 className="mt-2 text-3xl font-semibold tracking-tight text-stone-900 dark:text-stone-100">
               {selectedCluster.name}
             </h1>
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+            <p className="mt-2 text-sm text-stone-600 dark:text-stone-400">
               {selectedCluster.bootstrapServers}
             </p>
           </div>
@@ -68,26 +68,26 @@ export function DashboardPage({
         </div>
 
         {healthError ? (
-          <div className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200">
+          <div className="kb-alert-error mt-4">
             <p className="font-semibold">Health hatası</p>
             <p className="mt-1">{healthError}</p>
           </div>
         ) : null}
       </section>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+      <section className="kb-panel">
         <div>
-          <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          <p className="text-xs font-medium uppercase tracking-wider text-stone-500 dark:text-stone-400">
             Cluster Nodes
           </p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-stone-900 dark:text-stone-100">
             Broker listesi
           </h2>
         </div>
 
-        <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700">
-          <table className="min-w-full divide-y divide-slate-100 text-left dark:divide-slate-700">
-            <thead className="bg-slate-50 text-xs font-medium uppercase tracking-wider text-slate-500 dark:bg-slate-900 dark:text-slate-400">
+        <div className="kb-table-wrap mt-6">
+          <table className="kb-table">
+            <thead className="kb-thead">
               <tr>
                 <th className="px-4 py-3">Node ID</th>
                 <th className="px-4 py-3">Host</th>
@@ -95,7 +95,7 @@ export function DashboardPage({
                 <th className="px-4 py-3">Rack</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 bg-white text-sm text-slate-700 dark:divide-slate-700 dark:bg-slate-800 dark:text-slate-300">
+            <tbody className="kb-tbody">
               {healthLoading ? (
                 Array.from({ length: 3 }).map((_, index) => (
                   <tr key={index}>
@@ -107,8 +107,8 @@ export function DashboardPage({
                 ))
               ) : health?.nodes?.length ? (
                 health.nodes.map((node) => (
-                  <tr key={`${node.nodeId}-${node.host}`} className="transition hover:bg-slate-50 dark:hover:bg-slate-700/50">
-                    <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">{node.nodeId}</td>
+                  <tr key={`${node.nodeId}-${node.host}`} className="transition hover:bg-stone-50 dark:hover:bg-stone-700/50">
+                    <td className="px-4 py-3 font-medium text-stone-900 dark:text-stone-100">{node.nodeId}</td>
                     <td className="px-4 py-3">{node.host}</td>
                     <td className="px-4 py-3">{node.port}</td>
                     <td className="px-4 py-3">{node.rack ?? '-'}</td>
@@ -116,7 +116,7 @@ export function DashboardPage({
                 ))
               ) : (
                 <tr>
-                  <td className="px-4 py-10 text-center text-sm text-slate-500 dark:text-slate-400" colSpan="4">
+                  <td className="px-4 py-10 text-center text-sm text-stone-500 dark:text-stone-400" colSpan="4">
                     Node bilgisi bulunamadı.
                   </td>
                 </tr>
@@ -131,12 +131,12 @@ export function DashboardPage({
 
 function MetricCard({ label, value, truncate = false, large = false }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-800">
-      <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+    <div className="kb-subpanel bg-stone-100/80 px-4 py-3 dark:bg-stone-800">
+      <p className="text-xs font-medium uppercase tracking-wider text-stone-500 dark:text-stone-400">
         {label}
       </p>
       <p
-        className={`mt-2 text-slate-900 dark:text-slate-100 ${
+        className={`mt-2 text-stone-900 dark:text-stone-100 ${
           large ? 'text-2xl font-semibold tracking-tight' : 'text-sm'
         } ${truncate ? 'truncate' : ''}`}
       >

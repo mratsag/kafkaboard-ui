@@ -28,28 +28,28 @@ export function ClusterSidebar({
     clusters.find((cluster) => cluster.id === selectedClusterId) ?? null
 
   return (
-    <aside className="flex h-full w-64 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:shadow-2xl">
-      <div className="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-5 dark:border-slate-800">
+    <aside className="flex h-full w-64 flex-col overflow-hidden rounded-2xl border border-stone-200/80 bg-stone-50/95 text-stone-900 shadow-sm backdrop-blur dark:border-stone-700 dark:bg-stone-900/95 dark:text-stone-100 dark:shadow-2xl">
+      <div className="flex items-start justify-between gap-4 border-b border-stone-200 px-5 py-5 dark:border-stone-800">
         <div>
-          <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          <p className="text-xs font-medium uppercase tracking-wider text-stone-500 dark:text-stone-400">
             Workspace
           </p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-stone-900 dark:text-white">
             kafkaboard
           </h2>
         </div>
         <button
           type="button"
           onClick={onToggleTheme}
-          className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
+          className="rounded-lg p-2 text-stone-500 transition hover:bg-stone-100 hover:text-stone-900 dark:text-stone-300 dark:hover:bg-stone-800 dark:hover:text-white"
           aria-label="Toggle theme"
         >
           {theme === 'dark' ? '☀️' : '🌙'}
         </button>
       </div>
 
-      <div className="border-b border-slate-200 px-5 py-5 dark:border-slate-800">
-        <label className="block text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+      <div className="border-b border-stone-200 px-5 py-5 dark:border-stone-800">
+        <label className="block text-xs font-medium uppercase tracking-wider text-stone-500 dark:text-stone-400">
           Cluster
         </label>
 
@@ -57,7 +57,7 @@ export function ClusterSidebar({
           value={selectedClusterId ?? ''}
           onChange={(event) => onSelect(event.target.value)}
           disabled={loading || clusters.length === 0}
-          className="mt-3 h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-200 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-violet-400 dark:focus:ring-violet-500/20"
+          className="mt-3 h-11 w-full rounded-xl border border-stone-200 bg-stone-50 px-4 text-sm text-stone-900 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-200 disabled:cursor-not-allowed disabled:opacity-60 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100 dark:focus:border-amber-400 dark:focus:ring-amber-500/20"
         >
           {clusters.length === 0 ? (
             <option value="">Cluster yok</option>
@@ -72,20 +72,20 @@ export function ClusterSidebar({
         <button
           type="button"
           onClick={onOpenCreate}
-          className="mt-3 w-full rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-violet-700"
+          className="mt-3 w-full rounded-lg bg-amber-400 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-amber-300"
         >
           + Yeni Cluster
         </button>
 
         {selectedCluster ? (
-          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800">
+          <div className="mt-4 rounded-xl border border-stone-200 bg-stone-50 p-4 dark:border-stone-700 dark:bg-stone-800">
             <div className="flex items-center gap-2">
-              <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
+              <p className="truncate text-sm font-semibold text-stone-900 dark:text-stone-100">
                 {selectedCluster.name}
               </p>
               <SecurityBadge protocol={selectedCluster.securityProtocol} />
             </div>
-            <p className="mt-2 truncate text-xs text-slate-500 dark:text-slate-400">
+            <p className="mt-2 truncate text-xs text-stone-500 dark:text-stone-400">
               {selectedCluster.bootstrapServers}
             </p>
             {confirmingClusterId === selectedCluster.id ? (
@@ -105,7 +105,7 @@ export function ClusterSidebar({
                   <button
                     type="button"
                     onClick={onCancelDelete}
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-[11px] font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700"
+                    className="rounded-lg border border-stone-200 px-3 py-2 text-[11px] font-semibold text-stone-700 transition hover:bg-stone-100 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-700"
                   >
                     Hayır
                   </button>
@@ -123,11 +123,11 @@ export function ClusterSidebar({
             )}
           </div>
         ) : (
-          <div className="mt-4 rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center dark:border-slate-700 dark:bg-slate-800">
-            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+          <div className="mt-4 rounded-xl border border-dashed border-stone-200 bg-stone-50 px-4 py-6 text-center dark:border-stone-700 dark:bg-stone-800">
+            <p className="text-sm font-semibold text-stone-900 dark:text-stone-100">
               Cluster seçilmedi
             </p>
-            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+            <p className="mt-2 text-sm text-stone-500 dark:text-stone-400">
               Devam etmek için bir cluster kaydı seçin.
             </p>
           </div>
@@ -146,22 +146,22 @@ export function ClusterSidebar({
           <SidebarLink key={item.to} to={item.to} icon={item.icon} label={item.label} />
         ))}
 
-        <div className="my-4 border-t border-slate-200 dark:border-slate-800" />
+        <div className="my-4 border-t border-stone-200 dark:border-stone-800" />
 
         <SidebarLink to="/profile" icon="⚙️" label="Profile" />
       </nav>
 
-      <div className="border-t border-slate-200 px-5 py-4 dark:border-slate-800">
-        <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-500">
+      <div className="border-t border-stone-200 px-5 py-4 dark:border-stone-800">
+        <p className="text-xs font-medium uppercase tracking-wider text-stone-500 dark:text-stone-500">
           Session
         </p>
-        <p className="mt-2 max-w-[160px] truncate text-sm text-slate-600 dark:text-slate-300">
+        <p className="mt-2 max-w-[160px] truncate text-sm text-stone-600 dark:text-stone-300">
           {userEmail}
         </p>
         <button
           type="button"
           onClick={onLogout}
-          className="mt-4 w-full rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-800"
+          className="mt-4 w-full rounded-lg border border-stone-200 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:bg-stone-50 dark:border-stone-700 dark:text-stone-100 dark:hover:bg-stone-800"
         >
           Logout
         </button>
@@ -173,7 +173,7 @@ export function ClusterSidebar({
 function SecurityBadge({ protocol }) {
   if (!protocol || protocol === 'PLAINTEXT') {
     return (
-      <span className="shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400">
+      <span className="shrink-0 rounded bg-stone-200 px-1.5 py-0.5 text-[10px] font-medium text-stone-600 dark:bg-stone-700 dark:text-stone-400">
         PLAIN
       </span>
     )
@@ -199,8 +199,8 @@ function SidebarLink({ to, icon, label }) {
       className={({ isActive }) =>
         `flex items-center gap-3 rounded-xl border-l-2 px-4 py-3 text-sm font-medium transition ${
           isActive
-            ? 'border-violet-400 bg-violet-50 text-violet-700 dark:bg-slate-800 dark:text-violet-300'
-            : 'border-transparent text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white'
+            ? 'border-amber-400 bg-amber-50 text-amber-700 dark:bg-stone-800 dark:text-amber-300'
+            : 'border-transparent text-stone-600 hover:bg-stone-50 hover:text-stone-900 dark:text-stone-300 dark:hover:bg-stone-800 dark:hover:text-white'
         }`
       }
     >

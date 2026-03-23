@@ -9,6 +9,7 @@ import { AuthLayout } from './layouts/AuthLayout'
 import { DashboardLayout } from './layouts/DashboardLayout'
 import { ConsumerGroupsPage } from './pages/ConsumerGroupsPage'
 import { DashboardPage } from './pages/DashboardPage'
+import { LandingPage } from './pages/LandingPage'
 import { MessagesPage } from './pages/MessagesPage'
 import { ProfilePage } from './pages/ProfilePage'
 import { TopicsPage } from './pages/TopicsPage'
@@ -425,6 +426,17 @@ function App() {
     }
   }, [location.pathname, navigate, token])
 
+  useEffect(() => {
+    if (location.pathname === '/register' && authMode !== 'register') {
+      setAuthMode('register')
+      return
+    }
+
+    if (location.pathname === '/login' && authMode !== 'login') {
+      setAuthMode('login')
+    }
+  }, [authMode, location.pathname])
+
   async function handleAuthSubmit() {
     if (authMode === 'register' && authForm.password !== authForm.confirmPassword) {
       setAuthError('Şifreler eşleşmiyor')
@@ -741,6 +753,7 @@ function App() {
     <>
       <Routes>
         <Route element={<AuthLayout />}>
+          <Route path="/" element={<LandingPage token={token} />} />
           <Route
             path="/login"
             element={
@@ -752,7 +765,25 @@ function App() {
                   form={authForm}
                   loading={authLoading}
                   error={authError}
-                  onModeChange={setAuthMode}
+                  onModeChange={(nextMode) => navigate(nextMode === 'login' ? '/login' : '/register')}
+                  onFormChange={setAuthForm}
+                  onSubmit={handleAuthSubmit}
+                />
+              )
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              token ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <AuthScreen
+                  mode="register"
+                  form={authForm}
+                  loading={authLoading}
+                  error={authError}
+                  onModeChange={(nextMode) => navigate(nextMode === 'login' ? '/login' : '/register')}
                   onFormChange={setAuthForm}
                   onSubmit={handleAuthSubmit}
                 />
@@ -783,7 +814,6 @@ function App() {
               />
             }
           >
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route
               path="/dashboard"
               element={
@@ -868,7 +898,7 @@ function App() {
 
         <Route
           path="*"
-          element={<Navigate to={token ? '/dashboard' : '/login'} replace />}
+          element={<Navigate to={token ? '/dashboard' : '/'} replace />}
         />
       </Routes>
 

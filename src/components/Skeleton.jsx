@@ -7,7 +7,7 @@ export function Skeleton({ variant = 'row', className = '' }) {
 
   return (
     <div
-      className={`animate-pulse bg-slate-200 dark:bg-slate-700 ${variants[variant]} ${className}`}
+      className={`animate-pulse bg-stone-200 dark:bg-stone-700 ${variants[variant]} ${className}`}
     />
   )
 }

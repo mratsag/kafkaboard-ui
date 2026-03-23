@@ -2,6 +2,78 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .kb-panel {
+    @apply rounded-2xl border border-stone-200 bg-stone-50/95 p-6 shadow-sm backdrop-blur dark:border-stone-700 dark:bg-stone-800/95;
+  }
+
+  .kb-panel-solid {
+    @apply rounded-2xl border border-stone-200 bg-stone-50 shadow-2xl dark:border-stone-700 dark:bg-stone-800;
+  }
+
+  .kb-subpanel {
+    @apply rounded-xl border border-stone-200 bg-stone-50 p-4 dark:border-stone-700 dark:bg-stone-900;
+  }
+
+  .kb-table-wrap {
+    @apply overflow-hidden rounded-2xl border border-stone-200 dark:border-stone-700;
+  }
+
+  .kb-table {
+    @apply min-w-full divide-y divide-stone-100 text-left dark:divide-stone-700;
+  }
+
+  .kb-thead {
+    @apply bg-stone-50 text-xs font-medium uppercase tracking-wider text-stone-500 dark:bg-stone-900 dark:text-stone-400;
+  }
+
+  .kb-tbody {
+    @apply divide-y divide-stone-100 bg-white text-sm text-stone-700 dark:divide-stone-700 dark:bg-stone-800 dark:text-stone-300;
+  }
+
+  .kb-input {
+    @apply h-11 rounded-lg border border-stone-200 bg-stone-50 px-4 text-sm outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-200 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100 dark:focus:border-amber-400 dark:focus:ring-amber-500/20;
+  }
+
+  .kb-input-auth {
+    @apply h-12 w-full rounded-xl border border-stone-700 bg-stone-800 px-4 pr-12 text-sm text-stone-100 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20;
+  }
+
+  .kb-btn-primary {
+    @apply rounded-lg bg-amber-400 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-amber-300 disabled:cursor-not-allowed disabled:bg-stone-400;
+  }
+
+  .kb-btn-secondary {
+    @apply rounded-lg border border-stone-200 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:bg-stone-50 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-900;
+  }
+
+  .kb-btn-danger {
+    @apply rounded-lg bg-rose-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:bg-stone-400;
+  }
+
+  .kb-alert-error {
+    @apply rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200;
+  }
+
+  .kb-badge-live {
+    @apply inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold;
+  }
+
+  .kb-app-background {
+    background:
+      radial-gradient(circle at top left, rgba(249, 115, 22, 0.22), transparent 32%),
+      radial-gradient(circle at 80% 20%, rgba(251, 191, 36, 0.16), transparent 28%),
+      linear-gradient(135deg, rgba(28, 25, 23, 0.96), rgba(12, 10, 9, 1));
+  }
+
+  .kb-app-grid {
+    background-image:
+      linear-gradient(rgba(245, 245, 244, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245, 245, 244, 0.06) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+}
+
 :root {
   font-family:
     "IBM Plex Sans", "Avenir Next", "Segoe UI", sans-serif;

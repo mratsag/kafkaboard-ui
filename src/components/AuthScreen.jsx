@@ -20,37 +20,37 @@ export function AuthScreen({
   }
 
   return (
-    <div className="flex min-h-full flex-1 text-slate-100">
-      <section className="flex w-2/5 flex-col justify-center bg-slate-950 px-16 py-12 text-white">
+    <div className="flex min-h-full flex-1 text-stone-100">
+      <section className="flex w-2/5 flex-col justify-center bg-stone-950 px-16 py-12 text-white">
         <div className="mx-auto flex w-full max-w-xl flex-col justify-center">
-          <p className="text-sm font-medium uppercase tracking-wider text-violet-300">
+          <p className="text-sm font-medium uppercase tracking-wider text-amber-300">
             kafkaboard
           </p>
           <h1 className="mt-6 text-5xl font-semibold tracking-tight">
             Kafka cluster management, simplified.
           </h1>
-          <p className="mt-5 max-w-md text-sm leading-7 text-slate-300">
+          <p className="mt-5 max-w-md text-sm leading-7 text-stone-300">
             Tek panelden cluster sağlığı, topic işlemleri, consumer group görünümü ve mesaj okuma akışını yönetin.
           </p>
 
-          <ul className="mt-14 space-y-4 text-sm text-slate-300">
+          <ul className="mt-14 space-y-4 text-sm text-stone-300">
             <li className="flex items-start gap-3">
-              <span className="mt-0.5 text-violet-300">✦</span>
+              <span className="mt-0.5 text-amber-300">✦</span>
               <span>Real-time cluster health monitoring</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="mt-0.5 text-violet-300">✦</span>
+              <span className="mt-0.5 text-amber-300">✦</span>
               <span>Topic & consumer group management</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="mt-0.5 text-violet-300">✦</span>
+              <span className="mt-0.5 text-amber-300">✦</span>
               <span>Multi-cluster support</span>
             </li>
           </ul>
         </div>
       </section>
 
-      <section className="flex w-3/5 flex-col items-center justify-center bg-slate-900 px-16 py-12">
+      <section className="flex w-3/5 flex-col items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(251,191,36,0.12),_transparent_30%),linear-gradient(180deg,_#1c1917,_#0c0a09)] px-16 py-12">
         <form
           className="w-full max-w-md"
           onSubmit={(event) => {
@@ -65,13 +65,13 @@ export function AuthScreen({
             </div>
           ) : null}
 
-          <p className="text-xs font-medium uppercase tracking-wider text-violet-300">
+          <p className="text-xs font-medium uppercase tracking-wider text-amber-300">
             {mode === 'login' ? 'Welcome back' : 'Create account'}
           </p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-100">
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-stone-100">
             {mode === 'login' ? 'Giriş yapın' : 'Yeni hesap oluşturun'}
           </h2>
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-stone-400">
             {mode === 'login'
               ? 'Kaydedilmiş cluster listenize erişmek için oturum açın.'
               : 'Yeni hesabınızı oluşturun, ardından dashboard doğrudan açılacak.'}
@@ -88,7 +88,7 @@ export function AuthScreen({
                     email: event.target.value,
                   }))
                 }
-                className="h-12 w-full rounded-xl border border-slate-700 bg-slate-800 px-4 pr-12 text-sm text-slate-100 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
+                className="kb-input-auth"
               />
             </FieldLabel>
 
@@ -103,7 +103,7 @@ export function AuthScreen({
                       password: event.target.value,
                     }))
                   }
-                  className="h-12 w-full rounded-xl border border-slate-700 bg-slate-800 px-4 pr-12 text-sm text-slate-100 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
+                  className="kb-input-auth"
                 />
                 <PasswordToggleButton
                   visible={showPassword}
@@ -124,7 +124,7 @@ export function AuthScreen({
                         confirmPassword: event.target.value,
                       }))
                     }
-                    className="h-12 w-full rounded-xl border border-slate-700 bg-slate-800 px-4 pr-12 text-sm text-slate-100 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
+                    className="kb-input-auth"
                   />
                   <PasswordToggleButton
                     visible={showConfirmPassword}
@@ -138,7 +138,7 @@ export function AuthScreen({
           <button
             type="submit"
             disabled={loading}
-            className="mt-8 h-12 w-full rounded-xl bg-violet-600 text-sm font-semibold text-white transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:bg-slate-400"
+            className="kb-btn-primary mt-8 h-12 w-full rounded-xl"
           >
             {loading
               ? mode === 'login'
@@ -149,12 +149,12 @@ export function AuthScreen({
                 : 'Register'}
           </button>
 
-          <p className="mt-6 text-sm text-slate-400">
+          <p className="mt-6 text-sm text-stone-400">
             {mode === 'login' ? 'Hesabınız yok mu?' : 'Zaten hesabınız var mı?'}{' '}
             <button
               type="button"
               onClick={() => onModeChange(mode === 'login' ? 'register' : 'login')}
-              className="font-medium text-violet-300 transition hover:text-violet-200"
+              className="font-medium text-amber-300 transition hover:text-amber-200"
             >
               {mode === 'login' ? 'Register' : 'Login'}
             </button>
@@ -167,7 +167,7 @@ export function AuthScreen({
 
 function FieldLabel({ label, children }) {
   return (
-    <label className="block text-sm font-medium text-slate-300">
+    <label className="block text-sm font-medium text-stone-300">
       <span className="mb-2 block">{label}</span>
       {children}
     </label>
@@ -179,7 +179,7 @@ function PasswordToggleButton({ visible, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-slate-500 transition hover:text-slate-200"
+      className="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-stone-500 transition hover:text-stone-200"
       aria-label={visible ? 'Şifreyi gizle' : 'Şifreyi göster'}
     >
       {visible ? <EyeOpenIcon /> : <EyeClosedIcon />}

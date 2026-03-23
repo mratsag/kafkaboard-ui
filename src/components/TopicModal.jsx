@@ -28,36 +28,36 @@ export function TopicModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-6 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-800">
-        <div className="flex items-start justify-between border-b border-slate-200 px-6 py-5 dark:border-slate-700">
+      <div className="kb-panel-solid w-full max-w-md">
+        <div className="flex items-start justify-between border-b border-stone-200 px-6 py-5 dark:border-stone-700">
           <div>
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            <p className="text-xs font-medium uppercase tracking-wider text-stone-500 dark:text-stone-400">
               Topic Create
             </p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-stone-900 dark:text-stone-100">
               Yeni Topic
             </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-sm text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-100"
+            className="rounded-lg p-2 text-sm text-stone-500 transition hover:bg-stone-100 hover:text-stone-900 dark:text-stone-400 dark:hover:bg-stone-700 dark:hover:text-stone-100"
           >
             Kapat
           </button>
         </div>
 
         <div className="grid grid-cols-3 gap-4 px-6 py-6">
-          <label className="col-span-3 flex flex-col gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+          <label className="col-span-3 flex flex-col gap-2 text-sm font-medium text-stone-700 dark:text-stone-300">
             Topic Name
             <input
               name="topicName"
               value={form.topicName}
               onChange={onChange}
-              className="h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-sm outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-violet-400 dark:focus:ring-violet-500/20"
+              className="kb-input"
             />
           </label>
-          <label className="flex flex-col gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+          <label className="flex flex-col gap-2 text-sm font-medium text-stone-700 dark:text-stone-300">
             Partitions
             <input
               name="partitions"
@@ -65,10 +65,10 @@ export function TopicModal({
               min="1"
               value={form.partitions}
               onChange={onChange}
-              className="h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-sm outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-violet-400 dark:focus:ring-violet-500/20"
+              className="kb-input"
             />
           </label>
-          <label className="flex flex-col gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+          <label className="flex flex-col gap-2 text-sm font-medium text-stone-700 dark:text-stone-300">
             Replication
             <input
               name="replicationFactor"
@@ -76,22 +76,22 @@ export function TopicModal({
               min="1"
               value={form.replicationFactor}
               onChange={onChange}
-              className="h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-sm outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-violet-400 dark:focus:ring-violet-500/20"
+              className="kb-input"
             />
           </label>
         </div>
 
         {error ? (
-          <p className="mx-6 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200">
+          <p className="kb-alert-error mx-6">
             {error}
           </p>
         ) : null}
 
-        <div className="mt-6 flex justify-end gap-3 border-t border-slate-200 px-6 py-5 dark:border-slate-700">
+        <div className="mt-6 flex justify-end gap-3 border-t border-stone-200 px-6 py-5 dark:border-stone-700">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-900"
+            className="kb-btn-secondary"
           >
             Vazgeç
           </button>
@@ -99,7 +99,7 @@ export function TopicModal({
             type="button"
             onClick={onSubmit}
             disabled={loading}
-            className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:bg-slate-400"
+            className="kb-btn-primary"
           >
             {loading ? 'Oluşturuluyor...' : 'Oluştur'}
           </button>

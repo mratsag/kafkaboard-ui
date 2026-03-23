@@ -142,20 +142,20 @@ export function ProfilePage({
 
   return (
     <div className="flex flex-col gap-6">
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+      <section className="kb-panel">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            <p className="text-xs font-medium uppercase tracking-wider text-stone-500 dark:text-stone-400">
               Profile
             </p>
-            <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+            <h1 className="mt-2 text-3xl font-semibold tracking-tight text-stone-900 dark:text-stone-100">
               Account settings
             </h1>
           </div>
           <button
             type="button"
             onClick={onRefresh}
-            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-900"
+            className="rounded-lg border border-stone-200 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:bg-stone-50 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-900"
           >
             Yenile
           </button>
@@ -176,13 +176,13 @@ export function ProfilePage({
           <div className="mt-6 flex items-start gap-6">
             <div
               className="flex h-24 w-24 items-center justify-center rounded-full text-3xl font-semibold text-white shadow-lg"
-              style={{ backgroundColor: profile.avatarColor ?? '#6366f1' }}
+              style={{ backgroundColor: profile.avatarColor ?? '#f59e0b' }}
             >
               {initials}
             </div>
             <div className="grid flex-1 gap-4 md:grid-cols-2">
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900">
-                <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              <div className="kb-subpanel">
+                <p className="text-xs font-medium uppercase tracking-wider text-stone-500 dark:text-stone-400">
                   Display name
                 </p>
                 {editingDisplayName ? (
@@ -190,13 +190,13 @@ export function ProfilePage({
                     <input
                       value={displayNameDraft}
                       onChange={(event) => setDisplayNameDraft(event.target.value)}
-                      className="h-11 flex-1 rounded-xl border border-slate-200 bg-white px-4 text-sm outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-violet-400 dark:focus:ring-violet-500/20"
+                      className="kb-input h-11 flex-1 rounded-xl bg-white dark:bg-stone-800"
                     />
                     <button
                       type="button"
                       onClick={handleDisplayNameSave}
                       disabled={displayNameLoading}
-                      className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:bg-slate-400"
+                      className="kb-btn-primary"
                     >
                       Kaydet
                     </button>
@@ -207,20 +207,20 @@ export function ProfilePage({
                         setDisplayNameDraft(profile.displayName ?? '')
                         setDisplayNameError('')
                       }}
-                      className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                      className="kb-btn-secondary hover:bg-stone-100 dark:hover:bg-stone-800"
                     >
                       Vazgeç
                     </button>
                   </div>
                 ) : (
                   <div className="mt-3 flex items-center justify-between gap-4">
-                    <p className="text-sm text-slate-900 dark:text-slate-100">
+                    <p className="text-sm text-stone-900 dark:text-stone-100">
                       {profile.displayName || 'Not set'}
                     </p>
                     <button
                       type="button"
                       onClick={() => setEditingDisplayName(true)}
-                      className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                      className="kb-btn-secondary hover:bg-stone-100 dark:hover:bg-stone-800"
                     >
                       Düzenle
                     </button>
@@ -231,11 +231,11 @@ export function ProfilePage({
                 ) : null}
               </div>
 
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900">
-                <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              <div className="kb-subpanel">
+                <p className="text-xs font-medium uppercase tracking-wider text-stone-500 dark:text-stone-400">
                   Member since
                 </p>
-                <p className="mt-3 text-sm text-slate-900 dark:text-slate-100">
+                <p className="mt-3 text-sm text-stone-900 dark:text-stone-100">
                   {formatDate(profile.createdAt)}
                 </p>
               </div>
@@ -244,16 +244,16 @@ export function ProfilePage({
         ) : null}
       </section>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
-        <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+      <section className="kb-panel">
+        <p className="text-xs font-medium uppercase tracking-wider text-stone-500 dark:text-stone-400">
           Email
         </p>
-        <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+        <h2 className="mt-2 text-2xl font-semibold tracking-tight text-stone-900 dark:text-stone-100">
           Email address
         </h2>
 
         <form className="mt-6 grid gap-4 md:grid-cols-[1fr_1fr_auto]" onSubmit={handleEmailSubmit}>
-          <label className="flex flex-col gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+          <label className="flex flex-col gap-2 text-sm font-medium text-stone-700 dark:text-stone-300">
             New email
             <input
               type="email"
@@ -261,10 +261,10 @@ export function ProfilePage({
               onChange={(event) =>
                 setEmailForm((current) => ({ ...current, newEmail: event.target.value }))
               }
-              className="h-11 rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-violet-400 dark:focus:ring-violet-500/20"
+              className="kb-input rounded-xl"
             />
           </label>
-          <label className="flex flex-col gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+          <label className="flex flex-col gap-2 text-sm font-medium text-stone-700 dark:text-stone-300">
             Current password
             <input
               type="password"
@@ -272,13 +272,13 @@ export function ProfilePage({
               onChange={(event) =>
                 setEmailForm((current) => ({ ...current, password: event.target.value }))
               }
-              className="h-11 rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-violet-400 dark:focus:ring-violet-500/20"
+              className="kb-input rounded-xl"
             />
           </label>
           <button
             type="submit"
             disabled={emailLoading}
-            className="h-11 self-end rounded-lg bg-violet-600 px-4 text-sm font-semibold text-white transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:bg-slate-400"
+            className="kb-btn-primary h-11 self-end"
           >
             {emailLoading ? 'Güncelleniyor...' : 'Email Güncelle'}
           </button>
@@ -287,11 +287,11 @@ export function ProfilePage({
         {emailSuccess ? <p className="mt-3 text-sm text-emerald-600 dark:text-emerald-300">{emailSuccess}</p> : null}
       </section>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
-        <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+      <section className="kb-panel">
+        <p className="text-xs font-medium uppercase tracking-wider text-stone-500 dark:text-stone-400">
           Security
         </p>
-        <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+        <h2 className="mt-2 text-2xl font-semibold tracking-tight text-stone-900 dark:text-stone-100">
           Change password
         </h2>
 
@@ -323,7 +323,7 @@ export function ProfilePage({
           <button
             type="submit"
             disabled={passwordLoading}
-            className="h-11 rounded-lg bg-violet-600 px-4 text-sm font-semibold text-white transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:bg-slate-400 md:col-span-3 md:w-fit"
+            className="kb-btn-primary h-11 md:col-span-3 md:w-fit"
           >
             {passwordLoading ? 'Güncelleniyor...' : 'Şifre Güncelle'}
           </button>
@@ -336,10 +336,10 @@ export function ProfilePage({
         <p className="text-xs font-medium uppercase tracking-wider text-rose-600 dark:text-rose-300">
           Danger Zone
         </p>
-        <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+        <h2 className="mt-2 text-2xl font-semibold tracking-tight text-stone-900 dark:text-stone-100">
           Delete account
         </h2>
-        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+        <p className="mt-2 text-sm text-stone-600 dark:text-stone-400">
           Bu işlem geri alınamaz. Tüm cluster kayıtları ve refresh tokenları silinir.
         </p>
 
@@ -353,7 +353,7 @@ export function ProfilePage({
           <button
             type="submit"
             disabled={deleteLoading}
-            className="h-11 rounded-lg bg-rose-500 px-4 text-sm font-semibold text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:bg-slate-400"
+            className="h-11 rounded-lg bg-rose-500 px-4 text-sm font-semibold text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:bg-stone-400"
           >
             {deleteLoading ? 'Siliniyor...' : 'Hesabı Sil'}
           </button>
@@ -366,13 +366,13 @@ export function ProfilePage({
 
 function Field({ label, type, value, onChange }) {
   return (
-    <label className="flex flex-1 flex-col gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+    <label className="flex flex-1 flex-col gap-2 text-sm font-medium text-stone-700 dark:text-stone-300">
       {label}
       <input
         type={type}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="h-11 rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-violet-400 dark:focus:ring-violet-500/20"
+        className="kb-input h-11 rounded-xl"
       />
     </label>
   )

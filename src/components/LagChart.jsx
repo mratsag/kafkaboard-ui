@@ -32,9 +32,9 @@ function CustomTooltip({ active, payload, label }) {
   }
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700 shadow-lg dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
+    <div className="rounded-xl border border-stone-200 bg-white px-3 py-2 text-xs text-stone-700 shadow-lg dark:border-stone-700 dark:bg-stone-900 dark:text-stone-200">
       <p className="font-semibold">Lag: {payload[0].value}</p>
-      <p className="mt-1 text-slate-500 dark:text-slate-400">
+      <p className="mt-1 text-stone-500 dark:text-stone-400">
         Zaman: {formatTime(label)}
       </p>
     </div>
@@ -46,13 +46,13 @@ export function LagChart({ groupId, data }) {
   const stroke = getStrokeColor(currentLag)
 
   return (
-    <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
+    <div className="mt-4 rounded-xl border border-stone-200 bg-white p-4 dark:border-stone-700 dark:bg-stone-800">
       <div className="mb-4 flex items-center justify-between gap-3">
         <div>
-          <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          <p className="text-xs font-medium uppercase tracking-wider text-stone-500 dark:text-stone-400">
             Son 10 dakika
           </p>
-          <h3 className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">
+          <h3 className="mt-1 text-sm font-semibold text-stone-900 dark:text-stone-100">
             {groupId} lag trendi
           </h3>
         </div>

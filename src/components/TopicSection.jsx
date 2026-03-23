@@ -13,13 +13,13 @@ export function TopicSection({
   disabled,
 }) {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+    <section className="kb-panel">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          <p className="text-xs font-medium uppercase tracking-wider text-stone-500 dark:text-stone-400">
             Topics
           </p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-stone-900 dark:text-stone-100">
             Topic Listesi
           </h2>
         </div>
@@ -27,22 +27,22 @@ export function TopicSection({
           type="button"
           onClick={onOpenCreate}
           disabled={disabled}
-          className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-50"
+          className="kb-btn-primary disabled:opacity-50"
         >
           Yeni Topic
         </button>
       </div>
 
       {error ? (
-        <div className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200">
+        <div className="kb-alert-error mt-4">
           <p className="font-semibold">Topic hatası</p>
           <p className="mt-1">{error}</p>
         </div>
       ) : null}
 
-      <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700">
-        <table className="min-w-full divide-y divide-slate-100 text-left dark:divide-slate-700">
-          <thead className="bg-slate-50 text-xs font-medium uppercase tracking-wider text-slate-500 dark:bg-slate-900 dark:text-slate-400">
+      <div className="kb-table-wrap mt-6">
+        <table className="kb-table">
+          <thead className="kb-thead">
             <tr>
               <th className="px-4 py-3">Topic</th>
               <th className="px-4 py-3">Partitions</th>
@@ -50,7 +50,7 @@ export function TopicSection({
               <th className="px-4 py-3 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 bg-white text-sm text-slate-700 dark:divide-slate-700 dark:bg-slate-800 dark:text-slate-300">
+          <tbody className="kb-tbody">
             {loading ? (
               Array.from({ length: 5 }).map((_, index) => (
                 <tr key={index}>
@@ -67,10 +67,10 @@ export function TopicSection({
                 <td className="px-4 py-12" colSpan="4">
                   <div className="text-center">
                     <div className="text-4xl">{disabled ? '📡' : '🪹'}</div>
-                    <p className="mt-3 text-sm font-semibold text-slate-900 dark:text-slate-100">
+                    <p className="mt-3 text-sm font-semibold text-stone-900 dark:text-stone-100">
                       {disabled ? 'Cluster seçilmedi' : 'Henüz topic yok'}
                     </p>
-                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                    <p className="mt-2 text-sm text-stone-500 dark:text-stone-400">
                       {disabled
                         ? 'Önce soldan bir cluster seçin.'
                         : 'Bu cluster için ilk topic kaydını oluşturabilirsiniz.'}
@@ -80,8 +80,8 @@ export function TopicSection({
               </tr>
             ) : (
               topics.map((topic) => (
-                <tr key={topic.name} className="transition hover:bg-slate-50 dark:hover:bg-slate-700/50">
-                  <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
+                <tr key={topic.name} className="transition hover:bg-stone-50 dark:hover:bg-stone-700/50">
+                  <td className="px-4 py-3 font-medium text-stone-900 dark:text-stone-100">
                     {topic.name}
                   </td>
                   <td className="px-4 py-3">{topic.partitionCount}</td>
@@ -100,7 +100,7 @@ export function TopicSection({
                         <button
                           type="button"
                           onClick={onCancelDelete}
-                          className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-900"
+                          className="rounded-lg border border-stone-200 px-3 py-2 text-xs font-semibold text-stone-700 transition hover:bg-stone-50 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-900"
                         >
                           Hayır
                         </button>
