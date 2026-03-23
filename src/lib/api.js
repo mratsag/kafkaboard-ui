@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? ''
 const TOKEN_STORAGE_KEY = 'kafkaboard_token'
 const REFRESH_TOKEN_STORAGE_KEY = 'kafkaboard_refresh_token'
 const EMAIL_STORAGE_KEY = 'kafkaboard_email'
@@ -6,10 +6,6 @@ const EMAIL_STORAGE_KEY = 'kafkaboard_email'
 let unauthorizedHandler = null
 let tokenUpdateHandler = null
 let refreshRequestPromise = null
-
-if (!API_BASE_URL) {
-  throw new Error('VITE_API_BASE_URL is not defined')
-}
 
 export function getToken() {
   return localStorage.getItem(TOKEN_STORAGE_KEY)

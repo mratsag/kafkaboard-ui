@@ -1,9 +1,10 @@
 import { useEffect, useReducer, useRef } from 'react'
 
 function getWebSocketBaseUrl() {
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? ''
   if (!apiBaseUrl) {
-    throw new Error('VITE_API_BASE_URL is not defined')
+    const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://'
+    return `${protocol}${window.location.host}`
   }
 
   if (apiBaseUrl.startsWith('https://')) {
