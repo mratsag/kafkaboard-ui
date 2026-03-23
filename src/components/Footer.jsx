@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 export function Footer({ inverted = false }) {
   return (
     <footer
@@ -10,6 +12,12 @@ export function Footer({ inverted = false }) {
       <div className="mx-auto flex w-full max-w-[1600px] items-center justify-between gap-4">
         <span>Built by Murat Sağ · 2026</span>
         <div className="flex items-center gap-4">
+          <Link
+            to="/security"
+            className={`transition ${inverted ? 'hover:text-stone-200' : 'hover:text-stone-600 dark:hover:text-stone-200'}`}
+          >
+            Security
+          </Link>
           <a
             href="https://github.com/mratsag"
             target="_blank"

@@ -27,6 +27,8 @@ export function storeAuthSession({ token, refreshToken, email }) {
   localStorage.setItem(TOKEN_STORAGE_KEY, token)
   if (refreshToken) {
     localStorage.setItem(REFRESH_TOKEN_STORAGE_KEY, refreshToken)
+  } else {
+    localStorage.removeItem(REFRESH_TOKEN_STORAGE_KEY)
   }
   if (email) {
     localStorage.setItem(EMAIL_STORAGE_KEY, email)
@@ -76,6 +78,7 @@ async function performFetch(path, options = {}, tokenOverride = null) {
   const token = tokenOverride ?? getToken()
 
   return fetch(`${API_BASE_URL}${path}`, {
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
       ...(useAuth && token ? { Authorization: `Bearer ${token}` } : {}),
@@ -91,16 +94,13 @@ async function refreshAccessTokenInternal() {
   }
 
   const refreshToken = getRefreshToken()
-  if (!refreshToken) {
-    throw new Error('Refresh token bulunamadı')
-  }
 
   refreshRequestPromise = (async () => {
     const response = await performFetch(
       '/api/auth/refresh',
       {
         method: 'POST',
-        body: JSON.stringify({ refreshToken }),
+        body: JSON.stringify(refreshToken ? { refreshToken } : {}),
         useAuth: false,
       },
       null,
@@ -121,6 +121,7 @@ async function refreshAccessTokenInternal() {
     }
 
     localStorage.setItem(TOKEN_STORAGE_KEY, data.token)
+    localStorage.removeItem(REFRESH_TOKEN_STORAGE_KEY)
     tokenUpdateHandler?.(data.token)
     return data.token
   })()
@@ -212,14 +213,9 @@ export async function refreshAccessToken() {
 }
 
 export async function logout() {
-  const refreshToken = getRefreshToken()
-  if (!refreshToken) {
-    return null
-  }
-
   const response = await performFetch('/api/auth/logout', {
     method: 'POST',
-    body: JSON.stringify({ refreshToken }),
+    body: JSON.stringify(getRefreshToken() ? { refreshToken: getRefreshToken() } : {}),
     useAuth: false,
   })
 

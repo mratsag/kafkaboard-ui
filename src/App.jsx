@@ -12,6 +12,7 @@ import { DashboardPage } from './pages/DashboardPage'
 import { LandingPage } from './pages/LandingPage'
 import { MessagesPage } from './pages/MessagesPage'
 import { ProfilePage } from './pages/ProfilePage'
+import { SecurityPage } from './pages/SecurityPage'
 import { TopicsPage } from './pages/TopicsPage'
 import {
   clearToken,
@@ -754,6 +755,7 @@ function App() {
       <Routes>
         <Route element={<AuthLayout />}>
           <Route path="/" element={<LandingPage token={token} />} />
+          <Route path="/security" element={<SecurityPage />} />
           <Route
             path="/login"
             element={
