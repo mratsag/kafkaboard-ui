@@ -68,6 +68,18 @@ export function LandingPage({ token }) {
               </Link>
             </div>
 
+            <div className="mt-6 max-w-2xl rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4 backdrop-blur-sm">
+              <p className="text-sm leading-7 text-stone-300">
+                Built for engineers who need Kafka visibility without exposing credentials in
+                the browser.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-3 text-xs uppercase tracking-[0.22em] text-amber-200">
+                <span>Encrypted saved credentials</span>
+                <span>Account-scoped cluster access</span>
+                <span>Short-lived access tokens</span>
+              </div>
+            </div>
+
             <div className="mt-12 grid gap-4 sm:grid-cols-2">
               {[
                 ['Multi-cluster visibility', 'Switch between Kafka environments from one workspace.'],
