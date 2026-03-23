@@ -79,9 +79,12 @@ export function ClusterSidebar({
 
         {selectedCluster ? (
           <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800">
-            <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
-              {selectedCluster.name}
-            </p>
+            <div className="flex items-center gap-2">
+              <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
+                {selectedCluster.name}
+              </p>
+              <SecurityBadge protocol={selectedCluster.securityProtocol} />
+            </div>
             <p className="mt-2 truncate text-xs text-slate-500 dark:text-slate-400">
               {selectedCluster.bootstrapServers}
             </p>
@@ -164,6 +167,28 @@ export function ClusterSidebar({
         </button>
       </div>
     </aside>
+  )
+}
+
+function SecurityBadge({ protocol }) {
+  if (!protocol || protocol === 'PLAINTEXT') {
+    return (
+      <span className="shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400">
+        PLAIN
+      </span>
+    )
+  }
+  if (protocol === 'SASL_SSL') {
+    return (
+      <span className="shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300">
+        SSL
+      </span>
+    )
+  }
+  return (
+    <span className="shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-300">
+      SASL
+    </span>
   )
 }
 

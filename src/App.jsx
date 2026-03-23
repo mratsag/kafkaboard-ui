@@ -49,6 +49,10 @@ const INITIAL_TOPIC_FORM = {
 const INITIAL_CLUSTER_FORM = {
   name: '',
   bootstrapServers: 'localhost:9092',
+  securityProtocol: 'PLAINTEXT',
+  saslMechanism: 'PLAIN',
+  saslUsername: '',
+  saslPassword: '',
 }
 const INITIAL_AUTH_FORM = {
   email: '',
@@ -505,6 +509,10 @@ function App() {
     try {
       const result = await testConnection({
         bootstrapServers: clusterForm.bootstrapServers.trim(),
+        securityProtocol: clusterForm.securityProtocol,
+        saslMechanism: clusterForm.saslMechanism || undefined,
+        saslUsername: clusterForm.saslUsername || undefined,
+        saslPassword: clusterForm.saslPassword || undefined,
       })
       safeSetState(() => {
         setTestConnectionResult(result)
@@ -531,6 +539,10 @@ function App() {
       const nextCluster = await createCluster({
         name: clusterForm.name.trim(),
         bootstrapServers: clusterForm.bootstrapServers.trim(),
+        securityProtocol: clusterForm.securityProtocol,
+        saslMechanism: clusterForm.saslMechanism || undefined,
+        saslUsername: clusterForm.saslUsername || undefined,
+        saslPassword: clusterForm.saslPassword || undefined,
       })
 
       safeSetState(() => {
